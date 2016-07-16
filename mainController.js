@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
-var cs142App = angular.module('cs142App', ['ngRoute', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
+var cs142App = angular.module('cs142App', ['ngRoute', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
-cs142App.config(['$routeProvider',
+/*cs142App.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
             when('/users', {
@@ -26,7 +26,57 @@ cs142App.config(['$routeProvider',
                 redirectTo: '/users'
             });
     }]);
-                    
+*/
+
+cs142App.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', function($locationProvider, $stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('/users');
+
+    $stateProvider
+        
+        
+        .state('users', {
+            url: '/users',
+            templateUrl: 'components/user-list/user-listTemplate.html',
+            controller: 'UserListController'
+        })
+            .state('users.detail', {
+                url: '/users/:userId',
+                templateUrl: 'components/user-detail/user-detailTemplate.html',
+                controller: 'UserDetailController'
+            })
+
+
+        .state('login-register', {
+            url: '/login-register',
+            templateUrl: 'components/login-register/login-registerTemplate.html',
+            controller: 'LoginRegisterController'
+        })
+            .state('login-register.login', {
+                url: '/login',
+                templateUrl: 'components/login-register/loginTemplate.html
+            })
+            .state('login-register.register', {
+                url: '/register',
+                templateUrl: 'components/login-register/registerTemplate.html
+            })
+
+
+        .state('photos', {
+            url: '/photos/:userId',
+            templateUrl: 'components/user-photos/user-photosTemplate.html',
+            controller: 'UserPhotosController'
+        })
+            .state('photos.detail', {
+                url: '/:photoId',
+                templateUrl: 'components/user-photos/user-photosTemplate.html
+            })
+    /*$urlRouterProvider.deferIntercept();
+    $urlRouterProvider.otherwise('/users');
+
+    $locationProvider.html5Mode({enabled: false});
+    $stateProviderRef = $stateProvider;*/
+}]);
+
 cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$http', 'Session',
     function ($rootScope, $scope, $location, $http, Session) {
         var selectedPhotoFile;
