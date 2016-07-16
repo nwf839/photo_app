@@ -25,7 +25,7 @@
     </md-list-item>
     <md-list-item class="md-1-line">
         <div layout="column">
-            <md-button ng-href="#/photos/{{user.model._id}}">{{user.model.first_name}}'s Photos</md-button>
+            <md-button ui-sref="photos({id: user.model._id})">{{user.model.first_name}}'s Photos</md-button>
         </div>
     </md-list-item>
 </md-list>

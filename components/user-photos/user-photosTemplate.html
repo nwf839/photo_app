@@ -7,7 +7,7 @@
                     <span class="md-caption">Added: {{photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
                 </div>
                 <md-card-actions layout="column">
-                    <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photo.comments" ng-href="#/users/{{comment.user._id}}">
+                    <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photo.comments" ui-sref="users({id: comment.user._id})">
                         <div class="md-list-item-text">
                             <h3>{{comment.user.first_name}} {{comment.user.last_name}}</h3>
                             <p>{{comment.comment}}</p>
