@@ -1,0 +1,56 @@
+<form name="registerForm">
+    <div layout="column">
+        <div layout-gt-sm="column">
+            <md-input-container>
+                <label>Username</label>
+                <input type="text" name="login_name" ng-model="newUser.login_name" required/>
+                <div ng-messages="registerForm.login_name.$error" role="alert">
+                    <div ng-message="required">This field is required</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Password</label>
+                <input type="password" name="password" ng-model="newUser.password" required/>
+                <div ng-messages="registerForm.password.$error" role="alert">
+                    <div ng-message="required">This field is required</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Re-Enter Password</label>
+                <input type="password" name="passwordValidation" ng-model="passwordValidation" ng-match="newUser.password" required/>
+                <div ng-messages="registerForm.passwordValidation.$error" role="alert" multiple>
+                    <div ng-message="required">This field is required</div>
+                    <div ng-message="match">Passwords do not match</div>
+                </div>
+            </md-input-container>
+        </div>
+        <div layout-gt-small="row">
+            <md-input-container>
+                <label>First Name</label>
+                <input type="text" name="first_name" ng-model="newUser.first_name" required/>
+                <div ng-messages="registerForm.first_name.$error" role="alert">
+                    <div ng-message="required">This field is required</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Last Name</label>
+                <input type="text" name="last_name" ng-model="newUser.last_name"/>
+            </md-input-container>
+        </div>
+        <div layout="column">
+            <md-input-container>
+                <label>Location</label>
+                <input type="text" name="location" ng-model="newUser.location"/>
+            </md-input-container>
+            <md-input-container>
+                <label>Occupation</label>
+                <input type="text" name="occupation" ng-model="newUser.occupation"/>
+            </md-input-container>
+        </div>
+        <md-input-container class="md-block">
+            <label>Description</label>
+            <textarea ng-model="newUser.description" rows="5" class="textbox"></textarea>
+        </md-input-container>
+        <md-button ng-click="register(newUser)">Create Account</md-button>
+    </div>
+</form>

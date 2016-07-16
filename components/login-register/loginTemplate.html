@@ -1,0 +1,21 @@
+<form name="loginForm">
+    <div layout="column">
+        <div layout="row" layout-xs="column">
+            <md-input-container>
+                <label>Username</label>
+                <input type="text" name="login_name" ng-model="curUser.login_name" required/>
+                <div ng-messages="loginForm.login_name.$error" role="alert">
+                    <div ng-message="required">This field is required</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Password</label>
+                <input type="password" name="password" ng-model="curUser.password" required/>
+                    <div ng-messages="loginForm.password.$error" role="alert">
+                        <div ng-message="required">This field is required</div>
+                    </div>
+            </md-input-container>
+            <md-button ng-click="login(curUser)">Login</md-button>
+        </div>
+    </div>
+</form>
