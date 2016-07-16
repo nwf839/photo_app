@@ -1,12 +1,12 @@
 'use strict';
 
-cs142App.controller('UserDetailController', ['$scope', '$routeParams', 'UserDetailService', //'$resource',
-  function ($scope, $routeParams, UserDetailService) {//$resource) {
+cs142App.controller('UserDetailController', ['$scope', '$stateParams', 'UserDetailService', //'$resource',
+  function ($scope, $stateParams, UserDetailService) {//$resource) {
     /*
      * Since the route is specified as '/users/:userId' in $routeProvider config the
      * $routeParams  should have the userId property set with the path from the URL.
      */
-    var userId = $routeParams.userId;
+    var userId = $stateParams.userId;
     $scope.user = {};
     $scope.user.model = {};
 

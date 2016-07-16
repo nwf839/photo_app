@@ -35,7 +35,6 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
 
         .state('index', {
             abstract: true,
-            //url: '/',
             views: {
                 '@' : {
                     templateUrl: 'photo-share-layout.html',
@@ -43,9 +42,8 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
                 },
                 'top@index': { templateUrl: 'photo-share-top-nav.html' },
                 'side@index': { 
-                    templateUrl: 'photo-share-side-nav.html'
-                    //templateUrl: 'components/user-list/user-listTemplate.html',
-                    //controller: 'UserListController'
+                    templateUrl: 'components/user-list/user-listTemplate.html',
+                    controller: 'UserListController'
                 },
                 'main@index': { templateUrl: 'photo-share-display-window.html' }
             }
@@ -59,8 +57,14 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
         })
         .state('users.detail', {
             url: '/:userId',
-            templateUrl: 'components/user-detail/user-detailTemplate.html',
-            controller: 'UserDetailController'
+            views: {
+                'detail@index': {
+                    templateUrl: 'components/user-detail/user-detailTemplate.html',
+                    controller: 'UserDetailController'
+                }
+            }
+            //templateUrl: 'components/user-detail/user-detailTemplate.html',
+            //controller: 'UserDetailController'
         })
 
 
@@ -81,6 +85,7 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
 
 
         .state('photos', {
+            parent: 'index',
             url: '/photos/:userId',
             templateUrl: 'components/user-photos/user-photosTemplate.html',
             controller: 'UserPhotosController'

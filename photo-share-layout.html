@@ -22,7 +22,9 @@
 <div ui-view="top"></div>
 
 <div class="container" flex layout="row">
-    <div ui-view="side"></div>
+    <md-sidenav md-is-locked-open="true" class="md-whiteframe-z2">
+        <div ui-view="side"></div>
+    </md-sidenav>
     <div ui-view="main"></div>
 </div>
 <!--            <md-sidenav md-is-locked-open="true" class="md-whiteframe-z2">
