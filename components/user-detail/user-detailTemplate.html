@@ -1,0 +1,31 @@
+<md-list layout="column">
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+            <h3>Name</h3>
+            <p>{{user.model.first_name}} {{user.model.last_name}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+            <h3>Location</h3>
+            <p>{{user.model.location}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+            <h3>Occupation</h3>
+            <p>{{user.model.occupation}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text" layout="column">
+            <h3>Description</h3>
+            <p>{{user.model.description}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-1-line">
+        <div layout="column">
+            <md-button ng-href="#/photos/{{user.model._id}}">{{user.model.first_name}}'s Photos</md-button>
+        </div>
+    </md-list-item>
+</md-list>

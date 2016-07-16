@@ -1,0 +1,5 @@
+<div class='user-list'>
+    <div ng-repeat="user in userList.users" layout="column" layout-align="space-between stretch">
+        <md-button ng-href='#/users/{{user._id}}'>{{user.first_name}} {{user.last_name}}</md-button>
+    </div>
+</div>

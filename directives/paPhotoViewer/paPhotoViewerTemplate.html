@@ -1,0 +1,8 @@
+<div class="photo-pane" ng-transclude></div>
+<md-toolbar ng-show="show">
+    <div class="md-toolbar-tools">
+        <md-button ng-click="prev()">&lt;</md-button>
+        <md-button ng-repeat="(pIndex, pane) in panes" ng-click="select(pIndex)">{{pIndex + 1}}</md-button>
+        <md-button ng-click="next()">&gt;</md-button>
+    </div>
+</md-toolbar>
