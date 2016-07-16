@@ -48,7 +48,7 @@
 
     <body layout="column">
 
-        <md-toolbar layout = "row" layout-align="space-between center">
+       <!-- <md-toolbar layout = "row" layout-align="space-between center">
             <div ng-show="main.loggedIn">Hi, {{main.loggedInUser}}!</div>
             <div ng-hide="main.loggedIn">
                 <md-button ui-sref="login-register.login">Login</md-button>
@@ -72,15 +72,15 @@
         <div class="container" flex layout="row">
 
             <md-sidenav md-is-locked-open="true" class="md-whiteframe-z2">
-                <!--<div ng-include="'components/user-list/user-listTemplate.html'" ng-controller="UserListController"></div>-->
-                <div ui-view="users"></div>
+                <div ng-include="'components/user-list/user-listTemplate.html'" ng-controller="UserListController"></div>
+                <div ui-view></div>
             </md-sidenav>
 
             <md-content flex id="content">
                 <div ui-view></div>
             </md-content>
 
-        </div>
-
+        </div>-->
+        <div ui-view></div>
     </body>
 </html>

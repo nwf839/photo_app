@@ -32,33 +32,52 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
     $urlRouterProvider.otherwise('/users');
 
     $stateProvider
-        
+
+        .state('index', {
+            abstract: true,
+            //url: '/',
+            views: {
+                '@' : {
+                    templateUrl: 'photo-share-layout.html',
+                    controller: 'MainController'
+                },
+                'top@index': { templateUrl: 'photo-share-top-nav.html' },
+                'side@index': { 
+                    templateUrl: 'photo-share-side-nav.html'
+                    //templateUrl: 'components/user-list/user-listTemplate.html',
+                    //controller: 'UserListController'
+                },
+                'main@index': { templateUrl: 'photo-share-display-window.html' }
+            }
+        })
         
         .state('users', {
+            parent: 'index',
             url: '/users',
             templateUrl: 'components/user-list/user-listTemplate.html',
             controller: 'UserListController'
         })
-            .state('users.detail', {
-                url: '/users/:userId',
-                templateUrl: 'components/user-detail/user-detailTemplate.html',
-                controller: 'UserDetailController'
-            })
+        .state('users.detail', {
+            url: '/:userId',
+            templateUrl: 'components/user-detail/user-detailTemplate.html',
+            controller: 'UserDetailController'
+        })
 
 
         .state('login-register', {
+            parent: 'index',
             url: '/login-register',
             templateUrl: 'components/login-register/login-registerTemplate.html',
             controller: 'LoginRegisterController'
         })
-            .state('login-register.login', {
-                url: '/login',
-                templateUrl: 'components/login-register/loginTemplate.html'
-            })
-            .state('login-register.register', {
-                url: '/register',
-                templateUrl: 'components/login-register/registerTemplate.html'
-            })
+        .state('login-register.login', {
+            url: '/login',
+            templateUrl: 'components/login-register/loginTemplate.html'
+        })
+        .state('login-register.register', {
+            url: '/register',
+            templateUrl: 'components/login-register/registerTemplate.html'
+        })
 
 
         .state('photos', {
@@ -66,10 +85,10 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
             templateUrl: 'components/user-photos/user-photosTemplate.html',
             controller: 'UserPhotosController'
         })
-            .state('photos.detail', {
-                url: '/:photoId',
-                templateUrl: 'components/user-photos/user-photosTemplate.html'
-            })
+        .state('photos.detail', {
+            url: '/:photoId',
+            templateUrl: 'components/user-photos/user-photosTemplate.html'
+        })
     /*$urlRouterProvider.deferIntercept();
     $urlRouterProvider.otherwise('/users');
 
