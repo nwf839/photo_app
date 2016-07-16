@@ -28,7 +28,7 @@ var cs142App = angular.module('cs142App', ['ngRoute', 'ui.router', 'cs142App.cor
     }]);
 */
 
-cs142App.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', function($locationProvider, $stateProvider, $urlRouterProvider) {
+cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/users');
 
     $stateProvider
@@ -53,11 +53,11 @@ cs142App.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', fu
         })
             .state('login-register.login', {
                 url: '/login',
-                templateUrl: 'components/login-register/loginTemplate.html
+                templateUrl: 'components/login-register/loginTemplate.html'
             })
             .state('login-register.register', {
                 url: '/register',
-                templateUrl: 'components/login-register/registerTemplate.html
+                templateUrl: 'components/login-register/registerTemplate.html'
             })
 
 
@@ -68,7 +68,7 @@ cs142App.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', fu
         })
             .state('photos.detail', {
                 url: '/:photoId',
-                templateUrl: 'components/user-photos/user-photosTemplate.html
+                templateUrl: 'components/user-photos/user-photosTemplate.html'
             })
     /*$urlRouterProvider.deferIntercept();
     $urlRouterProvider.otherwise('/users');
