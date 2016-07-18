@@ -6,7 +6,6 @@ directives.directive('paPhotoViewer', [function() {
         transclude: true,
         scope: {
             showAll: '=',
-            photos: '='
         },
         controllerAs: 'photoViewerCtrl',
         bindToController: true,
@@ -17,11 +16,13 @@ directives.directive('paPhotoViewer', [function() {
             //        $scope.panes
             $scope.show = photoViewerCtrl.showAll.enabled;
             $scope.panes = [];
+            photoViewerCtrl.ids = [];
             photoViewerCtrl.selectedIndex = null;
             photoViewerCtrl.lastIndex = null;
             photoViewerCtrl.update = function(pane) {
-                if (pane.index === $scope.panes.length) photoViewerCtrl.addPane(pane);
-                else photoViewerCtrl.replacePane(pane);
+                var index = photoViewerCtrl.ids.indexOf(pane.photoId);
+                if (index === -1) photoViewerCtrl.addPane(pane);
+                else photoViewerCtrl.replacePane(pane, index);
                 $scope.select(photoViewerCtrl.selectedIndex);
             };
 
@@ -32,11 +33,13 @@ directives.directive('paPhotoViewer', [function() {
                     pane.active = true;
                 }
                 $scope.panes.push(pane);
+                photoViewerCtrl.ids.push(pane.photoId);
                 console.log($scope.panes);
+                console.log(photoViewerCtrl.ids);
             };
 
-            photoViewerCtrl.replacePane = function(pane) {
-                $scope.panes[pane.index] = pane;
+            photoViewerCtrl.replacePane = function(pane, index) {
+                $scope.panes[index] = pane;
             };
 
             $scope.select = function(index) {

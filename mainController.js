@@ -28,37 +28,43 @@ var cs142App = angular.module('cs142App', ['ngRoute', 'ui.router', 'cs142App.cor
     }]);
 */
 
-cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
+cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
+    //$urlRouterProvider.deferIntercept();
     $urlRouterProvider.otherwise('/users');
+    //$locationProvider.html5Mode({enabled: false});
 
     $stateProvider
 
-        .state('index', {
+        .state('root', {
             abstract: true,
             views: {
                 '@' : {
                     templateUrl: 'photo-share-layout.html',
                     controller: 'MainController'
                 },
-                'top@index': { templateUrl: 'photo-share-top-nav.html' },
-                'side@index': { 
+                'top@root': { templateUrl: 'photo-share-top-nav.html' },
+                'side@root': { 
                     templateUrl: 'components/user-list/user-listTemplate.html',
                     controller: 'UserListController'
                 },
-                'main@index': { templateUrl: 'photo-share-display-window.html' }
+                'main@root': { templateUrl: 'photo-share-display-window.html' }
             }
         })
         
         .state('users', {
-            parent: 'index',
+            parent: 'root',
             url: '/users',
-            templateUrl: 'components/user-list/user-listTemplate.html',
-            controller: 'UserListController'
+            views: {
+                'display@root': {
+                    templateUrl: 'components/user-list/user-listTemplate.html',
+                    controller: 'UserListController'
+                }
+            }
         })
         .state('users.detail', {
             url: '/:userId',
             views: {
-                'detail@index': {
+                'display@root': {
                     templateUrl: 'components/user-detail/user-detailTemplate.html',
                     controller: 'UserDetailController'
                 }
@@ -69,36 +75,58 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', function($stateProvider
 
 
         .state('login-register', {
-            parent: 'index',
+            parent: 'root',
             url: '/login-register',
-            templateUrl: 'components/login-register/login-registerTemplate.html',
-            controller: 'LoginRegisterController'
+            views: {
+                'display@root': {
+                    templateUrl: 'components/login-register/login-registerTemplate.html',
+                    controller: 'LoginRegisterController'
+                }
+            }
         })
         .state('login-register.login', {
             url: '/login',
-            templateUrl: 'components/login-register/loginTemplate.html'
+            //views: {
+            //    'display@root': {
+                    templateUrl: 'components/login-register/loginTemplate.html'
+            //    }
+            //}
         })
         .state('login-register.register', {
             url: '/register',
-            templateUrl: 'components/login-register/registerTemplate.html'
+            //views: {
+            //    'display@root': {
+                    templateUrl: 'components/login-register/registerTemplate.html'
+            //    }
+            //}
         })
 
 
         .state('photos', {
-            parent: 'index',
+            parent: 'root',
             url: '/photos/:userId',
-            templateUrl: 'components/user-photos/user-photosTemplate.html',
-            controller: 'UserPhotosController'
+            views: {
+                'display@root': {
+                    templateUrl: 'components/user-photos/user-photosTemplate.html',
+                    controller: 'UserPhotosController'
+                }
+            }
+            /*resolve: {
+                photos: function($stateParams, UserPhotosService) {
+                    return UserPhotosService.getPhotos($stateParams.userId);
+                }*/
         })
-        .state('photos.detail', {
+        /*.state('photos.detail', {
             url: '/:photoId',
-            templateUrl: 'components/user-photos/user-photosTemplate.html'
-        })
-    /*$urlRouterProvider.deferIntercept();
-    $urlRouterProvider.otherwise('/users');
+            views: {
+                'display@root': {
+                    templateUrl: 'components/user-photos/user-photosTemplate.html'
+                }
+            }
+        })*/
 
-    $locationProvider.html5Mode({enabled: false});
-    $stateProviderRef = $stateProvider;*/
+    //$stateProviderRef = $stateProvider;
+    console.log($stateProvider);
 }]);
 
 cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$http', 'Session',

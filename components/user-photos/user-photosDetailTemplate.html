@@ -1,6 +1,4 @@
-<pa-photo-viewer show-all="main.advancedFeatures">
-    <div ng-repeat="(pIndex, photo) in userPhotos.photos">
-        <pa-photo-pane photo-id="{{photo._id}}">
+<pa-photo-pane>
             <md-card>
                 <div class="pa-image-container">
                     <img ng-src="images/{{photo.file_name}}"></img>
@@ -24,5 +22,3 @@
                 </md-card-actions>
             </md-card>
         </pa-photo-pane>
-    </div>
-</pa-photo-viewer>
