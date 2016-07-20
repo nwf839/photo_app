@@ -12,15 +12,15 @@ services.factory('UserDetailService', ['$resource', function($resource) {
 
         return {
             getUser: function(id) {
-                if (userId === id) return Promise.resolve(user);
-                else {
+                //if (userId === id) return Promise.resolve(user);
+                //else {
                     return resource.get({id: id}).$promise
                         .then(setUser);
-                }
+                //}
             },
-            clearUser: function() {
-                user = {};
-                userId = null;
-            }
+            //clearUser: function() {
+            //    user = {};
+            //    userId = null;
+            //}
         }
 }]);

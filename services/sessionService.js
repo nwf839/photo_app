@@ -11,7 +11,7 @@ services.factory('Session', ['$rootScope', '$resource', '$location', 'UserDetail
                     if (loggedIn === false) $location.path('/login-register');
                     $rootScope.$emit('sessionChanged');
                 },
-                BroadcastNewUser = function(response) {
+                broadcastNewUser = function(response) {
                     $rootScope.$emit('newUser');
                     var fullUser = response.toJSON(),
                         loginInfo = {};
@@ -38,7 +38,7 @@ services.factory('Session', ['$rootScope', '$resource', '$location', 'UserDetail
                 register: function(newUser) {
                     if (loggedIn === false) {
                         return registerResource.save(newUser).$promise
-                            .then(notifyOfNewUser)
+                            .then(broadcastNewUser);
                     }
                 },
                 getUserFirstName: function() {

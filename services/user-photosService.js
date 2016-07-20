@@ -24,19 +24,19 @@ services.factory('UserPhotosService', ['$resource', 'UserDetailService', functio
 
         return {
             getPhotos: function(id) {
-                if (userId === id) return Promise.resolve(photos);
-                else {
+                //if (userId === id) return Promise.resolve(photos);
+                //else {
                     return resource.query({id: id}).$promise
                         .then(setPhotos.bind(null, id));
-                }
+                //}
             },
             resetPhotos: function(id) {
                 return resource.query({id: id}).$promise
                     .then(setPhotos.bind(null, id));
-            },
-            clearPhotos: function() {
-                photos = [];
-                userId = null;
-            },
+            }
+            //clearPhotos: function() {
+            //    photos = [];
+            //    userId = null;
+            //},
         }   
 }]);
