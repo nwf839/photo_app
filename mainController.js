@@ -140,8 +140,8 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })
 }]);
 
-cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$http', 'Session',
-    function ($rootScope, $scope, $state, $http, Session) {
+cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session',
+    function ($rootScope, $scope, $state, $timeout, $http, Session) {
         var selectedPhotoFile;
         
         $scope.inputFileNameChanged = function(element) {
@@ -191,8 +191,9 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$ht
         $rootScope.$on('$stateChangeStart', function(event, toState) {
             if ($scope.main.loggedIn === false) {
                 if (toState !== 'login-register.login' && toState !== 'login-register.register') {
-                    event.preventDefault();
-                    $state.go('login-register.login');
+                    $timeout(function() {
+                        $state.go('login-register.login');
+                    });
                 }
             }
         });
