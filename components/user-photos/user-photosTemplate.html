@@ -1,29 +1,3 @@
-<!--<pa-photo-viewer show-all="main.advancedFeatures">
-    <div ng-repeat="(pIndex, photo) in userPhotos.photos">
-        <pa-photo-pane photo-id="{{photo._id}}">
-            <md-card>
-                <div class="pa-image-container">
-                    <img ng-src="images/{{photo.file_name}}"></img>
-                    <span class="md-caption">Added: {{photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
-                </div>
-                <md-card-actions layout="column">
-                    <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photo.comments" ui-sref="users({id: comment.user._id})">
-                        <div class="md-list-item-text">
-                            <h3>{{comment.user.first_name}} {{comment.user.last_name}}</h3>
-                            <p>{{comment.comment}}</p>
-                            <p class="md-caption">{{comment.date_time | date:'MM/dd/yyyy @ h:mma'}}</p>
-                        </div>
-                    </md-list-item>
-                    <md-list-item>
-                        <md-input-container>
-                            <label>Comment</label>
-                            <textarea ng-model="userPhotos.comments[pIndex].comment"></textarea>
-                            <md-button ng-click="addComment(photo._id, pIndex)">Add Comment</md-button>
-                        </md-input-container>
-                    </md-list-item>
-                </md-card-actions>
-            </md-card>
-        </pa-photo-pane>
-    </div>
-</pa-photo-viewer>-->
-<div ui-view></div>
+<pa-photo-viewer photo-ids="userPhotos.ids" show="main.advancedFeatures.enabled">
+    <div ui-view></div>
+</pa-photo-view>

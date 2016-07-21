@@ -32,12 +32,12 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
             }
         };*/
 
-    $scope.userPhotos = photoData;//$scope.userPhotos || photoData;
+    $scope.userPhotos = $scope.userPhotos || photoData;//$scope.userPhotos || photoData;
 
-    $scope.addComment = function(photoId, pIndex) {
+    $scope.userPhotos.addComment = function(photoId, pIndex) {
         return AddCommentService.addComment(photoId, $scope.userPhotos.comments[pIndex])
             .then(replacePhoto.bind(null, pIndex))
-            //.then(UserPhotosService.getPhotos);
+            .then(UserPhotosService.getPhotos);
     };
 
 
@@ -49,6 +49,6 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
     });
 
     $scope.$watch('main.advancedFeatures.enabled', function(newValue, oldValue) {
-        //if (newValue !== oldValue) routeToState($scope.userPhotos.routes, newValue);
+        if (newValue !== oldValue) $state.go('photos.display');
     });
 }]);

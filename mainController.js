@@ -141,6 +141,7 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })*/
         .state('photos', {
             parent: 'root',
+            abstract: 'true',
             url: '/photos/:userId',
             params: {advancedFeatures: null},
             resolve: {
@@ -151,27 +152,29 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                             var data = {
                                 photos: [],
                                 comments: [],
+                                ids: [],
                                 routes: []
                             }
                             angular.forEach(result, function(photo) {
                                 data.photos.push(photo);
                                 data.comments.push({comment: ''});
+                                data.ids.push(photo._id);
                                 data.routes.push('photos.displayOne({photoId:' + photo._id + '})');
                             });
                             return data;
                         });
                 },
             },
-            onEnter: function($timeout, $state, $stateParams, photoData) {
+            /*onEnter: function($timeout, $state, $stateParams, photoData) {
                 // HACK: Allows onEnter function to terminate normally 
                 $timeout(function() {
                     if ($stateParams.advancedFeatures === true && photoData.routes.length > 0) {
-                        $state.go(photoData.routes[0]);
+                        $state.go('photos.displayOne', {photoId: photoData.ids[0]});
                     } else {
                         $state.go('photos.displayAll');
                     }
                 });
-            },
+            },*/
             views: {
                 'display@root': {
                     templateUrl: 'components/user-photos/user-photosTemplate.html',
@@ -179,13 +182,22 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                 }
             }
         })
-        .state('photos.displayAll', {
+        .state('photos.display', {
             url: '',
-            templateUrl: 'components/user-photos/user-photosAllTemplate.html'
+            templateUrl: 'components/user-photos/user-photosAllTemplate.html',
+            onEnter: function($timeout, $state, $stateParams, photoData) {
+                // HACK: Allows onEnter function to terminate normally 
+                $timeout(function() {
+                    if ($stateParams.advancedFeatures === true && photoData.routes.length > 0) {
+                        $state.go('photos.displayOne', {photoId: photoData.ids[0]});
+                    }
+                });
+            }
         })
         .state('photos.displayOne', {
             url: '/:photoId',
-            templateUrl: 'components/user-photos/user-photosOneTemplate.html'
+            templateUrl: 'components/user-photos/user-photoDetailTemplate.html',
+            controller: 'UserPhotoDetailController'
         })
 
     //$stateProviderRef = $stateProvider;
