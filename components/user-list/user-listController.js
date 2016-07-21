@@ -6,20 +6,6 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', 'list', 'upda
         $scope.main.selectedUser = '';
         $scope.userList = {};
         $scope.userList.users = list;
-        
-        /*UserListService.getUserList()
-            .then(function(users) {
-                $scope.userList.users = users;
-            });*/
-
-        /*$rootScope.$on('newUser', function() {
-            UserListService.reset()
-                .then(function(users) {
-                    $scope.userList.users = users;
-                });
-        });*/
-    
         $rootScope.$on('newUser', updateList($scope.userList.users));
-
     }
 ]);

@@ -3,41 +3,13 @@
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
 var cs142App = angular.module('cs142App', ['ngRoute', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
-/*cs142App.config(['$routeProvider',
-    function ($routeProvider) {
-        $routeProvider.
-            when('/users', {
-                templateUrl: 'components/user-list/user-listTemplate.html',
-                controller: 'UserListController'
-            }).
-            when('/login-register', {
-                templateUrl: 'components/login-register/login-registerTemplate.html',
-                controller: 'LoginRegisterController'
-            }).
-            when('/users/:userId', {
-                templateUrl: 'components/user-detail/user-detailTemplate.html',
-                controller: 'UserDetailController'
-            }).
-            when('/photos/:userId', {
-                templateUrl: 'components/user-photos/user-photosTemplate.html',
-                controller: 'UserPhotosController'
-            }).
-            otherwise({
-                redirectTo: '/users'
-            });
-    }]);
-*/
-
 cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
-    //$urlRouterProvider.deferIntercept();
     $urlRouterProvider.otherwise('/login-register/login');
-    //$locationProvider.html5Mode({enabled: false});
-
     $stateProvider
+       
 
         .state('root', {
             abstract: true,
-
             resolve: {
                 userListService: 'UserListService',
                 list: function(userListService) {
@@ -67,6 +39,7 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
             }
         })
         
+
         .state('users', {
             parent: 'root',
             url: '/users',
@@ -91,13 +64,12 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                     controller: 'UserDetailController'
                 }
             }
-            //templateUrl: 'components/user-detail/user-detailTemplate.html',
-            //controller: 'UserDetailController'
         })
 
 
         .state('login-register', {
             parent: 'root',
+            abstract: 'true',
             url: '/login-register',
             views: {
                 'display@root': {
@@ -108,37 +80,14 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })
         .state('login-register.login', {
             url: '/login',
-            //views: {
-            //    'display@root': {
-                    templateUrl: 'components/login-register/loginTemplate.html'
-            //    }
-            //}
+            templateUrl: 'components/login-register/loginTemplate.html'
         })
         .state('login-register.register', {
             url: '/register',
-            //views: {
-            //    'display@root': {
-                    templateUrl: 'components/login-register/registerTemplate.html'
-            //    }
-            //}
+            templateUrl: 'components/login-register/registerTemplate.html'
         })
 
 
-        /*.state('photos', {
-            parent: 'root',
-            abstract: true,
-            url: '/photos',
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-photos/user-photosTemplate.html',
-                    controller: 'UserPhotosController'
-                }
-            }
-            /*resolve: {
-                photos: function($stateParams, UserPhotosService) {
-                    return UserPhotosService.getPhotos($stateParams.userId);
-                }
-        })*/
         .state('photos', {
             parent: 'root',
             abstract: 'true',
@@ -165,16 +114,6 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                         });
                 },
             },
-            /*onEnter: function($timeout, $state, $stateParams, photoData) {
-                // HACK: Allows onEnter function to terminate normally 
-                $timeout(function() {
-                    if ($stateParams.advancedFeatures === true && photoData.routes.length > 0) {
-                        $state.go('photos.displayOne', {photoId: photoData.ids[0]});
-                    } else {
-                        $state.go('photos.displayAll');
-                    }
-                });
-            },*/
             views: {
                 'display@root': {
                     templateUrl: 'components/user-photos/user-photosTemplate.html',
@@ -199,12 +138,10 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
             templateUrl: 'components/user-photos/user-photoDetailTemplate.html',
             controller: 'UserPhotoDetailController'
         })
-
-    //$stateProviderRef = $stateProvider;
 }]);
 
 cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$http', 'Session',
-    function ($rootScope, $scope, $location, $http, Session) {
+    function ($rootScope, $scope, $state, $http, Session) {
         var selectedPhotoFile;
         
         $scope.inputFileNameChanged = function(element) {
@@ -251,10 +188,11 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$location', '$ht
             $scope.main.loggedIn = Session.isLoggedIn();
         });
 
-        $rootScope.$on('$routeChangeStart', function(event, next, current) {
+        $rootScope.$on('$stateChangeStart', function(event, toState) {
             if ($scope.main.loggedIn === false) {
-                if (next.templateUrl !== 'components/login-register/login-registerTemplate.html') {
-                    $location.path('/login-register');
+                if (toState !== 'login-register.login' && toState !== 'login-register.register') {
+                    event.preventDefault();
+                    $state.go('login-register.login');
                 }
             }
         });
