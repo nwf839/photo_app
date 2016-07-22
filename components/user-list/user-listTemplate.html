@@ -1,5 +1,14 @@
 <div class='user-list'>
-    <div ng-repeat="user in userList.users" layout="column" layout-align="space-between stretch">
-        <md-button ui-sref='users.detail({userId: user._id})'>{{user.first_name}} {{user.last_name}}</md-button>
-    </div>
+    <!--<div ng-repeat="user in userList.users" layout="column" layout-align="space-between stretch">-->
+        <md-list layout="column" layout-align="space-between stretch">
+            <!-- TODO: If number of photos and comments are coupled with userInfo on querying /users, no extra models or tracking will be necessary -->
+            <md-list-item ng-repeat="(uIndex, user) in userList.users track by user._id">
+                <div layout="row">
+                    <md-button ui-sref="users.detail({userId: user._id})">{{user.first_name}} {{user.last_name}}</md-button>
+                    <md-button class="md-icon-button" ui-sref="photos.display({userId: user._id})">{{userList.nPhotos[uIndex]}}</md-button>
+                    <!-- Placeholder until template and controller is made for comment view -->
+                    <md-button class="md-icon-button" ng-click="goToComments(user._id)">{{userList.nComments[uIndex]}}</md-button>
+                </div>
+            </md-list-item>
+        </md-list>
 </div>
