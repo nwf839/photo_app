@@ -35,6 +35,9 @@ photoSchema.statics.findPhotosByUserId = function(id) {
 };
 
 // Returns all userIds from comments
+// XXX DOES NOT WORK CORRECTLY
+// WILL NEED TO BE CHANGED OR SPLIT INTO TWO FUNCTIONS
+// XXX
 photoSchema.statics.getUserIdCounts = function() {
     return this.aggregate(
         [
@@ -58,6 +61,20 @@ photoSchema.statics.getUserIdCounts = function() {
             }}
         ]);
 };
+
+photoSchema.statics.getCommentsByUserId = function(id) {
+    return this.aggregate(
+        [
+            { $unwind: '$comments' },
+            { $project: { 
+                    comment: '$comments.comment',
+                    date_time: '$comments.date_time',
+                    user_id: '$comments.user_id',
+            }},
+            { $match: { user_id: mongoose.Types.ObjectId(id)}}
+            //{ $group: { _id: '$comments.user_id', comments: {$sum: 1} }}
+        ]);
+}
 
 // the schema is useless so far
 // we need to create a model using it

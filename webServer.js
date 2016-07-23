@@ -202,6 +202,19 @@ app.get('/photosOfUser/:id', function (request, response, next) {
         .catch(next);
 });
 
+app.get('/comments/:id', function(request, response, next) {
+    var id = request.params.id,
+        respond = sendResponse.bind(null, response),
+        fetchComments = function(id) {
+            return Photo.getCommentsByUserId(id);
+        };
+        
+    Promise.resolve(isAuthorized(request, id))
+        .then(fetchComments)
+        .then(respond)
+        .catch(next);
+});
+
 app.post('/admin/login', function(request, response, next) {
     var loginObj = request.body,
         respond = sendResponse.bind(null, response),
