@@ -7,17 +7,6 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
         $scope.userList = {};
         $scope.userList.users = list;
 
-        // XXX Placeholder models and population method to be used until webServer API
-        // is updated
-        $scope.userList.nPhotos = [];
-        $scope.userList.nComments = [];
-        angular.forEach(list, function() {
-            // XXX May need to convert server data to strings either here or in the
-            // resolve call
-            $scope.userList.nPhotos.push('2');
-            $scope.userList.nComments.push('5');
-        });
-
         // XXX May need to be changed, but should serve for now
         $scope.goToUser = function(id) {
             $state.go('users.detail', {userId: id});
