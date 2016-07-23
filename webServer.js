@@ -152,9 +152,6 @@ app.get('/user/list', function (request, response, next) {
     fetchData()
         .then(copyDoc)
         .then(merge)
-        .then(console.log);
-
-    User.generateUserList()
         .then(respond)
         .catch(next);
 });
