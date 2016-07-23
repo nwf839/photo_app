@@ -22,7 +22,7 @@ var userSchema = new mongoose.Schema({
 
 // Generates list of all Users with only their ids, first names, and last names
 userSchema.statics.generateUserList = function() {
-    return this.find({}).select('_id first_name last_name').exec();
+    return this.find({}).select('_id first_name last_name').sort({_id: 1}).exec();
 };
 
 // Returns single user with all fields when queried by id

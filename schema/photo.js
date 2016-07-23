@@ -34,6 +34,39 @@ photoSchema.statics.findPhotosByUserId = function(id) {
     return this.find({user_id: id}).exec();
 };
 
+// Returns all userIds from photos
+photoSchema.statics.getUserIdCountsByPhoto = function() {
+    return this.aggregate(
+        [
+            { $group: { _id: '$user_id', nPhotos: { $sum: 1 }}}
+        ]);
+};
+
+// Returns all userIds from comments
+photoSchema.statics.getUserIdCounts = function() {
+    return this.aggregate(
+        [
+            { $unwind: '$comments' },
+            { $group: {
+                _id: '$user_id',
+                nPhotos: { $sum: 1 },
+                nComments: {
+                    $sum: {
+                        $cond: [
+                            { $eq: ['$comments.user_id', '$user_id'] }, 1, 0 
+                        ]
+                    }
+                }
+            }},
+            { $sort: { _id: 1 }},
+            { $project: {
+                _id: 0,
+                nPhotos: 1,
+                nComments: 1
+            }}
+        ]);
+};
+
 // the schema is useless so far
 // we need to create a model using it
 var Photo = mongoose.model('Photo', photoSchema);

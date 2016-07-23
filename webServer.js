@@ -138,6 +138,21 @@ app.get('/test/:p1', function (request, response) {
  */
 app.get('/user/list', function (request, response, next) {
     var respond = sendResponse.bind(null, response);
+    var fetchData = function() {
+        return Promise.all([User.generateUserList(), Photo.getUserIdCounts()])
+    }
+    
+    var merge = function(nestedResult) {
+        return map(function(elem, index) {
+            elem.counts = nestedResult[1][index];
+            return elem;
+        }, nestedResult[0]);
+    };
+
+    fetchData()
+        .then(copyDoc)
+        .then(merge)
+        .then(console.log);
 
     User.generateUserList()
         .then(respond)
