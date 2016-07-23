@@ -34,14 +34,6 @@ photoSchema.statics.findPhotosByUserId = function(id) {
     return this.find({user_id: id}).exec();
 };
 
-// Returns all userIds from photos
-photoSchema.statics.getUserIdCountsByPhoto = function() {
-    return this.aggregate(
-        [
-            { $group: { _id: '$user_id', nPhotos: { $sum: 1 }}}
-        ]);
-};
-
 // Returns all userIds from comments
 photoSchema.statics.getUserIdCounts = function() {
     return this.aggregate(
