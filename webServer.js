@@ -138,20 +138,33 @@ app.get('/test/:p1', function (request, response) {
  */
 app.get('/user/list', function (request, response, next) {
     var respond = sendResponse.bind(null, response);
-    var fetchData = function() {
-        return Promise.all([User.generateUserList(), Photo.getUserIdCounts()])
+    var getPhotoCounts = function() {
+        return Photo.getPhotoCounts();
+    };
+    var getCommentCounts = function() {
+        return Photo.getCommentCounts();
+    };
+    var fetchData = function(result) {
+        return Promise.all([branch(getPhotoCounts, result), branch(getCommentCounts, result)])
     }
     
-    var merge = function(nestedResult) {
+    var branch = function(srcFn, result) {
+        return srcFn()
+            .then(copyDoc)
+            .then(merge.bind(null, result));
+    };
+    var merge = function(targArray, srcArray) {
         return map(function(elem, index) {
-            elem.counts = nestedResult[1][index];
+            var src = srcArray[index],
+                srcKey = Object.keys(src)[0];
+            elem[srcKey] = src[srcKey];
             return elem;
-        }, nestedResult[0]);
+        }, targArray);
     };
 
-    fetchData()
+    User.generateUserList()
         .then(copyDoc)
-        .then(merge)
+        .then(fetchData)
         .then(respond)
         .catch(next);
 });

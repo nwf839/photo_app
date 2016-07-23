@@ -38,29 +38,36 @@ photoSchema.statics.findPhotosByUserId = function(id) {
 // XXX DOES NOT WORK CORRECTLY
 // WILL NEED TO BE CHANGED OR SPLIT INTO TWO FUNCTIONS
 // XXX
-photoSchema.statics.getUserIdCounts = function() {
+photoSchema.statics.getPhotoCounts = function() {
     return this.aggregate(
         [
-            { $unwind: '$comments' },
             { $group: {
                 _id: '$user_id',
                 nPhotos: { $sum: 1 },
-                nComments: {
-                    $sum: {
-                        $cond: [
-                            { $eq: ['$comments.user_id', '$user_id'] }, 1, 0 
-                        ]
-                    }
-                }
             }},
             { $sort: { _id: 1 }},
             { $project: {
                 _id: 0,
                 nPhotos: 1,
-                nComments: 1
             }}
         ]);
 };
+
+photoSchema.statics.getCommentCounts = function() {
+    return this.aggregate(
+        [
+            { $unwind: '$comments' },
+            { $group: {
+                _id: '$comments.user_id',
+                nComments: { $sum: 1 }
+            }},
+            { $sort: { _id: 1 }},
+            { $project: { 
+                _id: 0,
+                nComments: 1
+            }}
+        ]);
+}
 
 photoSchema.statics.getCommentsByUserId = function(id) {
     return this.aggregate(
