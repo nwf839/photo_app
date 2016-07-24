@@ -4,10 +4,7 @@ services.factory('UserCommentsService', ['$resource', function($resource) {
 
     return {
         getComments: function(userId) {
-            return resource.get({userId: userId}).$promise
-                .then(function(response) {
-                    return response.toJSON();
-                });
+            return resource.query({userId: userId}).$promise
         }
     }
 }]);
