@@ -22,6 +22,6 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
         });
 
         $scope.$watch('main.advancedFeatures.enabled', function(newValue, oldValue) {
-            if (newValue !== oldValue) $state.go('photos.display');
+            if (newValue !== oldValue) $state.go('photos.display', {advancedFeatures: newValue});
         });
 }]);
