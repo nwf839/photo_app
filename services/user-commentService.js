@@ -1,4 +1,4 @@
-services.factory('UserCommentService', ['$resource', function($resource) {
+services.factory('UserCommentsService', ['$resource', function($resource) {
     var resource = $resource('comments/:userId');
     var comments = [];
 
