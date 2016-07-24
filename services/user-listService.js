@@ -4,7 +4,6 @@ cs142App.factory('UserListService', ['$resource', function($resource) {
     var resource = $resource('/user/list'),
         list = [],
         setList = function(response) {
-            console.log('call');
             list = response.map(function(user) {
                 return user.toJSON();
             });

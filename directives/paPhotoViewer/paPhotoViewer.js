@@ -24,9 +24,6 @@ directives.directive('paPhotoViewer', [function() {
                 if ($scope.curIndex > 0) $scope.select($scope.curIndex - 1);
             };
         }],
-        link: function(scope, element, attributes, controller) {
-            console.log(scope);
-        },
         templateUrl: 'directives/paPhotoViewer/paPhotoViewerTemplate.html'
     }
 }]);
