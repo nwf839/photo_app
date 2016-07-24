@@ -146,6 +146,12 @@ app.get('/user/list', function (request, response, next) {
     };
     var fetchData = function(result) {
         return Promise.all([branch(getPhotoCounts, result), branch(getCommentCounts, result)])
+            // XXX HACK: Promise.all used to allow parallel processing of model, but returns
+            //           a copy of the model for each branch. There is most likely a more elegant
+            //           way of doing this, possible by not returning this part at all...
+            .then(function(result) {
+                return result[0];
+            });
     }
     
     var branch = function(srcFn, result) {
