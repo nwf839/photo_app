@@ -5,9 +5,9 @@
             <md-list-item ng-repeat="(uIndex, user) in userList.users track by user._id">
                 <div layout="row">
                     <md-button ui-sref="users.detail({userId: user._id})">{{user.first_name}} {{user.last_name}}</md-button>
-                    <md-button class="md-icon-button" ui-sref="photos.display({userId: user._id, advancedFeatures: main.advancedFeatures.enabled})">{{user.nPhotos}}</md-button>
+                    <md-button ng-show="main.advancedFeatures.enabled" class="md-icon-button" ui-sref="photos.display({userId: user._id, advancedFeatures: main.advancedFeatures.enabled})">{{user.nPhotos}}</md-button>
                     <!-- Placeholder until template and controller is made for comment view -->
-                    <md-button class="md-icon-button" ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
+                    <md-button ng-show="main.advancedFeatures.enabled" class="md-icon-button" ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
                 </div>
             </md-list-item>
         </md-list>
