@@ -138,6 +138,24 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
             templateUrl: 'components/user-photos/user-photoDetailTemplate.html',
             controller: 'UserPhotoDetailController'
         })
+
+
+        .state('comments', {
+            parent: 'root',
+            url: '/comments/:userId',
+            resolve: {
+                userCommentsService: 'UserCommentsService',
+                comments: function($stateParams, userCommentsService) {
+                    return userCommentsService.getComments($stateParams.userId);
+                }
+            },
+            views: {
+                'display@root': {
+                    templateUrl: 'components/user-comments/user-commentsTemplate.html',
+                    controller: 'UserCommentsController'
+                }
+            }
+        })
 }]);
 
 cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session',
