@@ -34,6 +34,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 var fs = require('fs');
+var password = require('./cs142password.js');
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require('./schema/user.js');
@@ -240,14 +241,21 @@ app.post('/admin/login', function(request, response, next) {
         updateSession = function(user) {
             request.session.user = user;
             return user;
+        },
+        checkPassword = function(passwordEntry) {
+            if (password.doesPasswordMatch(passwordEntry.password_digest, passwordEntry.salt, loginObj.password) === false) {
+                var err = new Error('invalid password');
+                err.status = 400;
+                throw err;
+            } else return User.findUserById(passwordEntry._id);
         };
 
-    User.findUserOnLogin(loginObj)
+    User.getPasswordEntryFromUsername(loginObj.login_name)
+        .then(checkPassword)
         .then(userQueryIsValid)
         .then(updateSession)
         .then(respond)
         .catch(next);
-    
 });
 
 app.post('/admin/logout', function(request, response, next) {

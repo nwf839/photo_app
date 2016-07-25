@@ -33,9 +33,11 @@ userSchema.statics.findUserById = function(id, projection) {
     return query.exec();
 };
 
-// Returns single user when queried by login_name
-userSchema.statics.findUserOnLogin = function(loginObj) {
-    return this.findOne(loginObj).select('_id first_name last_name').exec();
+// Returns salt from userId
+userSchema.statics.getPasswordEntryFromUsername = function(login_name) {
+    var res = this.findOne({login_name: login_name}).select('password_digest salt').exec();
+    console.log(res);
+    return res;
 };
 
 // the schema is useless so far
