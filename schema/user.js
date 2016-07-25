@@ -15,7 +15,8 @@ var userSchema = new mongoose.Schema({
     description: String,  // A brief user description
     occupation: String,    // Occupation of the user.
     login_name: String,  // Login name of the user
-    password: String    // Password of the user
+    password_digest: String,    // Password digest salted user's salted password
+    salt: String    // Salt used to hash user's password
 });
 
 // static methods
