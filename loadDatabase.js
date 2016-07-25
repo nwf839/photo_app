@@ -20,7 +20,7 @@
  */
 
 // Function used to hash user passwords
-var makePasswordEntry = require('cs142password').makePasswordEntry;
+var makePasswordEntry = require('./cs142password.js').makePasswordEntry;
 
 // Get the magic models we used in the previous projects.
 var cs142models = require('./modelData/photoApp.js').cs142models;
