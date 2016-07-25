@@ -15,16 +15,8 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                 list: function(userListService) {
                     return userListService.getUserList();
                 },
-                // XXX Not sure if this will work...
                 updateList: function(userListService) {
-                    return function(model) {
-                        userListService.reset()
-                            .then(function(result) {
-                                model = result;
-                                console.log(model);
-                                return model;
-                            })
-                    }
+                    return userListService.getUserList;
                 }
             },
             views: {
@@ -210,7 +202,6 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
 
         $rootScope.$on('$stateChangeStart', function(event, toState) {
             if ($scope.main.loggedIn === false) {
-                console.log(toState);
                 if (toState.name !== 'login-register.login' && toState.name !== 'login-register.register') {
                     $timeout(function() {
                         $state.go('login-register.login');

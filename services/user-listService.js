@@ -12,15 +12,12 @@ cs142App.factory('UserListService', ['$resource', function($resource) {
 
     return {
         getUserList: function() {
-            if (list.length !== 0) return Promise.resolve(list);
-            else {
                 return resource.query().$promise
                     .then(setList);
-            }
-        },
-        reset: function() {
+        }
+        /*reset: function() {
             list = [];
             return this.getUserList();
-        }
+        }*/
     }
 }]);

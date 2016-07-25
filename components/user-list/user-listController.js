@@ -7,6 +7,10 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
         $scope.userList = {};
         $scope.userList.users = list;
 
-        $rootScope.$on('newUser', updateList($scope.userList.users));
-    }
-]);
+        $rootScope.$on('newUser', function() {
+            updateList()
+                .then(function(result) {
+                    $scope.userList.users = result;
+                });
+        });
+    }]);
