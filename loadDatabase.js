@@ -19,6 +19,9 @@
  *
  */
 
+// Function used to hash user passwords
+var makePasswordEntry = require('cs142password').makePasswordEntry;
+
 // Get the magic models we used in the previous projects.
 var cs142models = require('./modelData/photoApp.js').cs142models;
 
@@ -46,24 +49,28 @@ Promise.all(removePromises).then(function () {
     var userModels = cs142models.userListModel();
     var mapFakeId2RealId = {}; // Map from fake id to real Mongo _id
     var userPromises = userModels.map(function (user) {
-        return User.create({
-            first_name: user.first_name,
-            last_name: user.last_name,
-            location: user.location,
-            description: user.description,
-            occupation: user.occupation,
-            login_name: user.last_name.toLowerCase(),
-            password: 'weak'
-        }, function (err, userObj) {
-            if (err) {
-                console.error('Error create user', err);
-            } else {
-                mapFakeId2RealId[user._id] = userObj._id;
-                user.objectID = userObj._id;
-                console.log('Adding user:', user.first_name + ' ' + user.last_name, ' with ID ',
-                    user.objectID);
-            }
-        });
+        return makePasswordEntry('weak')
+            .then(function(passwordEntry) {
+                return User.create({
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    location: user.location,
+                    description: user.description,
+                    occupation: user.occupation,
+                    login_name: user.last_name.toLowerCase(),
+                    password_digest: passwordEntry.digest,
+                    salt: passwordEntry.salt
+                }, function (err, userObj) {
+                    if (err) {
+                        console.error('Error create user', err);
+                    } else {
+                        mapFakeId2RealId[user._id] = userObj._id;
+                        user.objectID = userObj._id;
+                        console.log('Adding user:', user.first_name + ' ' + user.last_name, ' with ID ',
+                            user.objectID);
+                    }
+                });
+            });
     });
 
 
