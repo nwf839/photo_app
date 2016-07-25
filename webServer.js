@@ -138,7 +138,7 @@ app.get('/test/:p1', function (request, response) {
  * URL /user/list - Return all the User object.
  */
 app.get('/user/list', function (request, response, next) {
-    var respond = sendResponse.bind(null, response);
+    var respond = sendResponse.bind(null, response),
     getPhotoCounts = function() {
         return Photo.getPhotoCounts();
     },
