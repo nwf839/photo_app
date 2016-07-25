@@ -1,5 +1,5 @@
-services.factory('Session', ['$rootScope', '$resource', '$location', 'UserDetailService', 'UserPhotosService',
-        function($rootScope, $resource, $location, UserDetailService, UserPhotosService) {
+services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'UserDetailService', 'UserPhotosService',
+        function($rootScope, $resource, $state, $timeout, UserDetailService, UserPhotosService) {
             var user = {},
                 loginResource = $resource('/admin/login'),
                 logoutResource = $resource('/admin/logout'),
@@ -8,16 +8,11 @@ services.factory('Session', ['$rootScope', '$resource', '$location', 'UserDetail
                 setUser = function(response) {
                     user = response.toJSON();
                     loggedIn = (Object.keys(user).length !== 0);
-                    if (loggedIn === false) $location.path('/login-register');
+                    if (loggedIn === false) $timeout($state.go('login-register.login'));
                     $rootScope.$emit('sessionChanged');
                 },
-                broadcastNewUser = function(response) {
+                broadcastNewUser = function() {
                     $rootScope.$emit('newUser');
-                    var fullUser = response.toJSON(),
-                        loginInfo = {};
-                    loginObj.login_name = fullUser.login_name;
-                    loginObj.password = fullUser.password;
-                    return loginObj;
                 };
 
             return {

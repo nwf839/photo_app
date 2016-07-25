@@ -21,6 +21,8 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                         userListService.reset()
                             .then(function(result) {
                                 model = result;
+                                console.log(model);
+                                return model;
                             })
                     }
                 }

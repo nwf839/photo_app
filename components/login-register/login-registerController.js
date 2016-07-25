@@ -10,8 +10,7 @@ cs142App.controller('LoginRegisterController', ['$scope', 'Session',
      
       $scope.login = Session.login;
       $scope.register = function(user) {
-          Session.register(user)
-              .then(Session.login);
+          Session.register(user);
       };
 
       $scope.curUser = {};
