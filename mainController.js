@@ -208,7 +208,8 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
 
         $rootScope.$on('$stateChangeStart', function(event, toState) {
             if ($scope.main.loggedIn === false) {
-                if (toState !== 'login-register.login' && toState !== 'login-register.register') {
+                console.log(toState);
+                if (toState.name !== 'login-register.login' && toState.name !== 'login-register.register') {
                     $timeout(function() {
                         $state.go('login-register.login');
                     });
