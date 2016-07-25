@@ -161,7 +161,6 @@ app.get('/user/list', function (request, response, next) {
     },
     merge = function(targArray, srcArray) {
         var key = Object.keys(srcArray[0])[1];
-        console.log(key);
         return map(function(elem) {
             var i;
             var found = false;
