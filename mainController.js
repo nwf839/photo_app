@@ -152,8 +152,9 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })
 }]);
 
-cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session',
+cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session', 
     function ($rootScope, $scope, $state, $timeout, $http, Session) {
+
         var selectedPhotoFile;
         
         $scope.inputFileNameChanged = function(element) {
