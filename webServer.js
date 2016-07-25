@@ -46,6 +46,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
+var resize = require('imageMagick').resize;
 var app = express();
 
 require('mongoose').Promise = Promise;
@@ -341,20 +342,25 @@ app.post('/photos/new', function(request, response, next) {
         // the original file name unique by adding a unique prefix with a timestamp
         var timestamp = new Date().valueOf();
         var filename = 'U' + String(timestamp) + request.file.originalname;
+        var thumbnail = 'thumbnail.' + filename;
         var createPhoto = function() {
-            var photo = new Photo({file_name: filename, date_time: new Date(), user_id: request.session.user._id});
+            var photo = new Photo({file_name: filename, thumbnail: thumbnail,  date_time: new Date(), user_id: request.session.user._id});
             console.log(photo);
             photo.save();
         };
-        var writeFile = function(path, filename, buffer) {
+        var writeFiles = function(path, filename, thumbnail, buffer) {
             return new Promise(function(resolve, reject) {
                 fs.writeFile(path + filename, buffer, function(err) {
-                    if (err) return reject(err);
+                    if (err) reject(err);
+                    resize({srcPath: path + filename, dstPath: path + thumbnail, width: 200}, function(err, stdout, stderr) {
+                        if (err) reject(err);
+                    });
                     resolve(filename);
                 });
             });
         };
-        writeFile("./images/", filename, request.file.buffer)
+
+        writeFiles("./images/", filename, thumbnail, request.file.buffer)
             .then(createPhoto)
             .then(respond)
             .catch(next);
