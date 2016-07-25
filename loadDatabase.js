@@ -58,7 +58,7 @@ Promise.all(removePromises).then(function () {
                     description: user.description,
                     occupation: user.occupation,
                     login_name: user.last_name.toLowerCase(),
-                    password_digest: passwordEntry.digest,
+                    password_digest: passwordEntry.hash,
                     salt: passwordEntry.salt
                 }, function (err, userObj) {
                     if (err) {
@@ -68,6 +68,7 @@ Promise.all(removePromises).then(function () {
                         user.objectID = userObj._id;
                         console.log('Adding user:', user.first_name + ' ' + user.last_name, ' with ID ',
                             user.objectID);
+                        console.log(userObj);
                     }
                 });
             });
