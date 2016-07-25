@@ -46,10 +46,6 @@ photoSchema.statics.getPhotoCounts = function() {
                 nPhotos: { $sum: 1 },
             }},
             { $sort: { _id: 1 }},
-            { $project: {
-                _id: 0,
-                nPhotos: 1,
-            }}
         ]);
 };
 
@@ -62,10 +58,6 @@ photoSchema.statics.getCommentCounts = function() {
                 nComments: { $sum: 1 }
             }},
             { $sort: { _id: 1 }},
-            { $project: { 
-                _id: 0,
-                nComments: 1
-            }}
         ]);
 }
 

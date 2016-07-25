@@ -139,13 +139,13 @@ app.get('/test/:p1', function (request, response) {
  */
 app.get('/user/list', function (request, response, next) {
     var respond = sendResponse.bind(null, response);
-    var getPhotoCounts = function() {
+    getPhotoCounts = function() {
         return Photo.getPhotoCounts();
-    };
-    var getCommentCounts = function() {
+    },
+    getCommentCounts = function() {
         return Photo.getCommentCounts();
-    };
-    var fetchData = function(result) {
+    },
+    fetchData = function(result) {
         return Promise.all([branch(getPhotoCounts, result), branch(getCommentCounts, result)])
             // XXX HACK: Promise.all used to allow parallel processing of model, but returns
             //           a copy of the model for each branch. There is most likely a more elegant
@@ -153,20 +153,29 @@ app.get('/user/list', function (request, response, next) {
             .then(function(result) {
                 return result[0];
             });
-    }
-    
-    var branch = function(srcFn, result) {
+    },
+    branch = function(srcFn, result) {
         return srcFn()
             .then(copyDoc)
             .then(merge.bind(null, result));
-    };
-    var merge = function(targArray, srcArray) {
-        return map(function(elem, index) {
-            var src = srcArray[index],
-                srcKey = Object.keys(src)[0];
-            elem[srcKey] = src[srcKey];
+    },
+    merge = function(targArray, srcArray) {
+        var key = Object.keys(srcArray[0])[1];
+        console.log(key);
+        return map(function(elem) {
+            var i;
+            var found = false;
+            for (i = 0; i < srcArray.length; i++) {
+                if (elem._id === srcArray[i]._id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found === true) elem[key] = srcArray[i][key];
+            else elem[key] = 0;
             return elem;
         }, targArray);
+                 
     };
 
     User.generateUserList()
@@ -270,14 +279,28 @@ app.post('/admin/logout', function(request, response, next) {
 });
 
 app.post('/admin/register', function(request, response, next) {
-    var registerUser = function() {
+    var checkForUsername = function() {
+                if (User.userExists(request.body.login_name) === true) {
+                    var err = new Error('Username Already Exists');
+                    err.status = 400;
+                    throw err;
+                } else {
+                    return request.body.password;
+                }
+            },
+    registerUser = function(passwordEntry) {
+        request.body.salt = passwordEntry.salt;
+        request.body.password_digest = passwordEntry.hash;
+        delete request.body.password;
         var user = new User(request.body);
         user.save();
         return user;
     },
     respond = sendResponse.bind(null, response);
-    
-    Promise.resolve(registerUser())
+
+    Promise.resolve(checkForUsername())
+        .then(password.makePasswordEntry)
+        .then(registerUser)
         .then(respond)
         .catch(next);
 });
