@@ -1,10 +1,10 @@
 <md-card ng-model="userPhotoDetail.photo">
     <div class="pa-image-container">
-        <img ng-src="images/{{userPhotoDetail.photo.file_name}}"></img>
-        <span class="md-caption">Added: {{userPhotoDetail.photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
+        <img ng-src="images/{{photoDetail.photo.file_name}}"></img>
+        <span class="md-caption">Added: {{photoDetail.photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
     </div>
     <md-card-actions layout="column">
-        <md-list-item class="md-3-line md-long-text" ng-repeat="comment in userPhotoDetail.photo.comments" ui-sref="users({id: comment.user._id})">
+        <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photoDetail.photo.comments track by comment._id" ui-sref="users({id: comment.user._id})">
             <div class="md-list-item-text">
                 <h3>{{comment.user.first_name}} {{comment.user.last_name}}</h3>
                 <p>{{comment.comment}}</p>
@@ -14,9 +14,16 @@
         <md-list-item>
             <md-input-container>
                 <label>Comment</label>
-                <textarea ng-model="userPhotoDetail.commentModel.comment"></textarea>
-                <md-button ng-click="userPhotoDetail.addComment()">Add Comment</md-button>
+                <textarea ng-model="photoDetail.commentModel.comment"></textarea>
+                <md-button ng-click="photoDetail.addComment()">Add Comment</md-button>
             </md-input-container>
         </md-list-item>
     </md-card-actions>
 </md-card>
+<md-toolbar>
+    <div class="md-toolbar-tools">
+        <md-button ng-click="prev()">&lt;</md-button>
+        <md-button ng-repeat="(rIndex, id) in photoDetail.ids" ng-click="select(rIndex)">{{rIndex + 1}}</md-button>
+        <md-button ng-click="next()">&gt;</md-button>
+    </div>
+</md-toolbar>

@@ -1,8 +1,1 @@
 <div ui-view></div>
-<md-toolbar ng-show="main.advancedFeatures.enabled">
-    <div class="md-toolbar-tools">
-        <md-button ng-click="prev()">&lt;</md-button>
-        <md-button ng-repeat="(rIndex, id) in userPhotos.ids" ng-click="select(rIndex)">{{rIndex + 1}}</md-button>
-        <md-button ng-click="next()">&gt;</md-button>
-    </div>
-</md-toolbar>

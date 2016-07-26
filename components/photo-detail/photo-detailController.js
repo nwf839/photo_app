@@ -1,22 +1,36 @@
 'use strict';
 
-cs142App.controller('PhotoDetailController', ['$scope', '$stateParams', 'AddCommentService', function($scope, $stateParams, AddCommentService) {
-    var photoId = $stateParams.photoId,
-        index = $scope.userPhotos.ids.indexOf(photoId),
-        replacePhoto = function(photo) {
-            $scope.userPhotoDetail.photo = photo;
-            $scope.userPhotoDetail.comment = '';
-        };
+cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentService', 'photoDetail', function($scope, $state, AddCommentService, photoDetail) {
+    var replacePhoto = function(photo) {
+        $scope.photoDetail.photo = photo;
+        $scope.photoDetail.comment = '';
+    };
 
-    $scope.userPhotoDetail = {};
-    $scope.userPhotoDetail.photo = $scope.userPhotos.photos[index];
-    $scope.userPhotoDetail.commentModel = $scope.userPhotos.comments[index];
-    $scope.userPhotoDetail.addComment = function() {
-        return AddCommentService.addComment(photoId, $scope.userPhotoDetail.commentModel)
+    $scope.photoDetail = photoDetail;
+    $scope.photoDetail.addComment = function() {
+        return AddCommentService.addComment(photoId, $scope.photoDetail.commentModel)
             .then(replacePhoto);
     };
 
-    $scope.$watch('userPhotoDetail.photo', function(newValue, oldValue) {
-        if (newValue !== oldValue) $scope.userPhotoDetail.photo = newValue;
+    console.log($scope.photoDetail);
+    $scope.$watch('photoDetail.photo', function(newValue, oldValue) {
+        if (newValue !== oldValue) $scope.photoDetail.photo = newValue;
     });
+    
+
+    // XXX Setting parent scope variable, may be unnecessary...
+    $scope.main.curIndex = $scope.photoDetail.photoIndex;
+
+    $scope.select = function(index) {
+        $scope.main.curIndex = index;
+        $state.go('.', {photoId: $scope.photoDetail.ids[index]});
+    };
+
+    $scope.next = function() {
+        if ($scope.main.curIndex < $scope.photoDetail.ids.length - 1) $scope.select($scope.main.curIndex + 1);
+    };
+
+    $scope.prev = function() {
+        if ($scope.main.curIndex > 0) $scope.select($scope.main.curIndex - 1);
+    };
 }]);

@@ -1,7 +1,7 @@
 <md-grid-list 
     md-cols-xs="1" md-cols-sm="2" md-cols="4"
     md-row-height="3:2" md-gutter="12px" md-gutter-gt-sm="8px">
-    <md-grid-tile ng-repeat="photo in userPhotos.photos track by photo._id" ui-sref="photos.display.single({photoId: photo._id})">
+    <md-grid-tile ng-repeat="photo in userPhotos.photos track by photo._id" ui-sref="photos.display.detail({photoId: photo._id})">
         <img ng-src="images/{{photo.thumbnail}}"></img>
     </md-grid-tile>
 </md-grid-list>

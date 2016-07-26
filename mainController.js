@@ -115,20 +115,26 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                             return data;
                         });
                 },
-            },
-            onEnter: function($timeout, $state, $stateParams, photoData) {
-                // HACK: Allows onEnter function to terminate normally 
-                $timeout(function() {
-                    if ($stateParams.advancedFeatures === true && photoData.ids.length > 0) {
-                        $state.go('photos.display.single', {photoId: photoData.ids[0]});
-                    } 
-                });
             }
         })
-        .state('photos.display.single', {
+        .state('photos.display.detail', {
             url: '/:photoId',
-            templateUrl: 'components/photo-detail/photo-detailTemplate.html',
-            controller: 'PhotoDetailController'
+            resolve: {
+                photoDetail: function($stateParams, photoData) {
+                    var data = {};
+                    data.photoIndex = photoData.ids.indexOf($stateParams.photoId);
+                    data.photo = photoData.photos[data.photoIndex];
+                    data.commentModel = {comment: ''};
+                    data.ids = photoData.ids;
+                    return data;
+                }
+            },
+            views: {
+                'display@root': {
+                    templateUrl: 'components/photo-detail/photo-detailTemplate.html',
+                    controller: 'PhotoDetailController'
+                }
+            }
         })
 
 
@@ -191,6 +197,7 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
         $scope.main.loggedInId = Session.getUserFirstName();
         $scope.main.advancedFeatures = {};
         $scope.main.advancedFeatures.enabled = false;
+        $scope.main.curIndex = -1;
 
         $scope.main.logout = Session.logout;
         

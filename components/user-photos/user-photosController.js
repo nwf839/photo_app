@@ -25,6 +25,7 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
             if (newValue !== oldValue) $state.go('photos.display', {advancedFeatures: newValue});
         });
         
+
         $scope.curIndex = 0;
 
         $scope.select = function(index) {
