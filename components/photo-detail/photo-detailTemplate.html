@@ -1,7 +1,7 @@
 <md-card ng-model="userPhotoDetail.photo">
     <div class="pa-image-container">
         <img ng-src="images/{{userPhotoDetail.photo.file_name}}"></img>
-        <span class="md-caption">Added: {{photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
+        <span class="md-caption">Added: {{userPhotoDetail.photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
     </div>
     <md-card-actions layout="column">
         <md-list-item class="md-3-line md-long-text" ng-repeat="comment in userPhotoDetail.photo.comments" ui-sref="users({id: comment.user._id})">

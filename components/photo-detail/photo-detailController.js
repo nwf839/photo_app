@@ -1,6 +1,6 @@
 'use strict';
 
-cs142App.controller('UserPhotoDetailController', ['$scope', '$stateParams', 'AddCommentService', function($scope, $stateParams, AddCommentService) {
+cs142App.controller('PhotoDetailController', ['$scope', '$stateParams', 'AddCommentService', function($scope, $stateParams, AddCommentService) {
     var photoId = $stateParams.photoId,
         index = $scope.userPhotos.ids.indexOf(photoId),
         replacePhoto = function(photo) {

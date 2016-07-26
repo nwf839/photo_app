@@ -24,4 +24,19 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
         $scope.$watch('main.advancedFeatures.enabled', function(newValue, oldValue) {
             if (newValue !== oldValue) $state.go('photos.display', {advancedFeatures: newValue});
         });
+        
+        $scope.curIndex = 0;
+
+        $scope.select = function(index) {
+            $scope.curIndex = index;
+            $state.go('.', {photoId: $scope.userPhotos.ids[index]});
+        };
+
+        $scope.next = function() {
+            if ($scope.curIndex < $scope.userPhotos.ids.length - 1) $scope.select($scope.curIndex + 1);
+        };
+
+        $scope.prev = function() {
+            if ($scope.curIndex > 0) $scope.select($scope.curIndex - 1);
+        };
 }]);
