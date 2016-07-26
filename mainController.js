@@ -129,8 +129,8 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })
         .state('photos.displayOne', {
             url: '/:photoId',
-            templateUrl: 'components/user-photos/user-photoDetailTemplate.html',
-            controller: 'UserPhotoDetailController'
+            templateUrl: 'components/photos-detail/photo-detailTemplate.html',
+            controller: 'PhotoDetailController'
         })
 
 
