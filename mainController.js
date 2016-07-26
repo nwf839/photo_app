@@ -94,7 +94,6 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
         })
         .state('photos.display', {
             url: '/:userId',
-            params: {advancedFeatures: null},
             templateUrl: 'components/user-photos/user-photosDisplayTemplate.html',
             controller: 'UserPhotosController',
             resolve: {
@@ -195,8 +194,6 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
         $scope.main.selectedUser = '';
         $scope.main.loggedIn = Session.isLoggedIn();
         $scope.main.loggedInId = Session.getUserFirstName();
-        $scope.main.advancedFeatures = {};
-        $scope.main.advancedFeatures.enabled = false;
         $scope.main.curIndex = -1;
 
         $scope.main.logout = Session.logout;

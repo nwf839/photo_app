@@ -11,9 +11,6 @@
             <div ng-show="main.loggedIn">
                 <md-button ng-click="main.logout()">Logout</md-button>
             </div>
-            <div>
-                <md-switch ng-model="main.advancedFeatures.enabled">Advanced Features</md-switch>
-            </div>
             <div ng-hide="main.loggedIn">
                 <md-button ui-sref="login-register.register">Register</md-button>
             </div>
