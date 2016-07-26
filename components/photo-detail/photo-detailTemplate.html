@@ -11,6 +11,13 @@
                 <p class="md-caption">{{comment.date_time | date:'MM/dd/yyyy @ h:mma'}}</p>
             </div>
         </md-list-item>
+        <md-list-item class="md-2-line md-long-text" ng-show="!commentIsEmpty">
+            <div class="md-list-item-text">
+                <h3>{{photoDetail.user.first_name}} {{photoDetail.user.last_name}}</h3>
+                <p ng-bind="photoDetail.commentModel.comment"></p>
+                <!-- PLACEHOLDER: Could add a directive or element to track current time -->
+            </div>
+        </md-list-item>
         <md-list-item>
             <md-input-container>
                 <label>Comment</label>

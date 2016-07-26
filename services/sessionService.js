@@ -7,6 +7,7 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                 loggedIn = false,
                 setUser = function(response) {
                     user = response.toJSON();
+                    console.log(user);
                     loggedIn = (Object.keys(user).length !== 0);
                     if (loggedIn === false) $timeout($state.go('login-register.login'));
                     $rootScope.$emit('sessionChanged');
