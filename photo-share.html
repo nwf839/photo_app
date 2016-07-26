@@ -52,40 +52,6 @@
     </head>
 
     <body layout="column">
-
-       <!-- <md-toolbar layout = "row" layout-align="space-between center">
-            <div ng-show="main.loggedIn">Hi, {{main.loggedInUser}}!</div>
-            <div ng-hide="main.loggedIn">
-                <md-button ui-sref="login-register.login">Login</md-button>
-            </div>
-            <div ng-show="main.loggedIn" layout="row">
-                <input type="file" accept="image/*" name="file" onchange="angular.element(this).scope().inputFileNameChanged(this)">
-                <md-button ng-click="uploadPhoto()">Add Photo</md-button>
-            </div>
-            <div>{{main.selectedUser}}</div>
-            <div ng-show="main.loggedIn">
-                <md-button ng-click="main.logout()">Logout</md-button>
-            </div>
-            <div>
-                <md-switch ng-model="main.advancedFeatures.enabled">Advanced Features</md-switch>
-            </div>
-            <div ng-hide="main.loggedIn">
-                <md-button ui-sref="login-register.register">Register</md-button>
-            </div>
-        </md-toolbar>
-
-        <div class="container" flex layout="row">
-
-            <md-sidenav md-is-locked-open="true" class="md-whiteframe-z2">
-                <div ng-include="'components/user-list/user-listTemplate.html'" ng-controller="UserListController"></div>
-                <div ui-view></div>
-            </md-sidenav>
-
-            <md-content flex id="content">
-                <div ui-view></div>
-            </md-content>
-
-        </div>-->
-        <div ui-view></div>
+       <div ui-view></div>
     </body>
 </html>

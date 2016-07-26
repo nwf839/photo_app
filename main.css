@@ -5,13 +5,17 @@ Since CSS uses a global name space for classes we should use class names startin
 cs142-main- here.
 */
 
-.textbox {
-    height: 300px;
+body {
+    height: 100%;
     width: 100%;
-};
+}
 
-.pa-image-container img {
-    max-width: 100%;
-    width: auto;
-    height: auto !important;
-};
+.display {
+    height:100%;
+    width:100%;
+}
+
+.layout-padding {
+    height:100%;
+    width:100%;
+}

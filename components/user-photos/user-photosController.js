@@ -9,7 +9,7 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
                     return userId;
             };
         
-        $scope.userPhotos = $scope.userPhotos || photoData;
+        $scope.userPhotos = photoData;
 
         $scope.userPhotos.addComment = function(photoId, pIndex) {
             return AddCommentService.addComment(photoId, $scope.userPhotos.comments[pIndex])
