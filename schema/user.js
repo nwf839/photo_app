@@ -33,6 +33,12 @@ userSchema.statics.findUserById = function(id, projection) {
     return query.exec();
 };
 
+userSchema.statics.findUserByLoginName = function(login_name, projection) {
+    var query = this.findOne({login_name: login_name});
+    if (projection) query = query.select(projection);
+    return query.exec();
+};
+
 // Returns true if username already exists in database
 userSchema.statics.userExists = function(login_name) {
     return this.findOne({login_name: login_name}).select('_id').exec()
@@ -42,8 +48,8 @@ userSchema.statics.userExists = function(login_name) {
 };
 
 // Returns salt from userId
-userSchema.statics.getPasswordEntryFromUsername = function(login_name) {
-    return this.findOne({login_name: login_name}).select('password_digest salt').exec();
+userSchema.statics.getPasswordHash = function(login_name) {
+    return this.findOne({login_name: login_name}).select('password_digest').exec();
 };
 
 // the schema is useless so far

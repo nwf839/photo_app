@@ -1,49 +1,33 @@
 'use strict';
 
-const crypto = require('crypto');
+var Promise = require('bluebird');
+var bcrypt = Promise.promisifyAll(require('bcrypt'));
+const saltRounds = 10;
+
 /*
  * Return a salted and hashed password entry from a
  * clear text password.
  * @param {string} clearTextPassword
- * @return {object} passwordEntry
- * where passwordEntry is an object with two string
- * properties:
- *      salt - The salt used for the password
- *      hash - The sha1 hash of the password and salt
+ * @return {string} 
  *
  */
-function makePasswordEntry(clearTextPassword) {
-    var generateSalt = function() {
-        return new Promise(function(resolve, reject) {
-            crypto.randomBytes(8, function(err, buffer) {
-                if (err) reject(err);
-                else resolve({salt: buffer.toString('hex')});
-            });
-        });
-    },
-    createHash = function(passwordEntry) {
-        var hash = crypto.createHash('sha1');
-        passwordEntry.hash = hash.update(clearTextPassword.concat(passwordEntry.salt)).digest('hex');
-        //console.log(passwordEntry);
-        return passwordEntry;
+module.exports.hashPassword = function(clearTextPassword) {
+    var hash = function(salt) {
+        return bcrypt.hashAsync(clearTextPassword, salt);
     };
 
-    return generateSalt()
-        .then(createHash);
+    return bcrypt.genSaltAsync(saltRounds)
+        .then(hash);
 };
 
 /*
- * Return true if the specifed clear text password
- * and salt generates the specified hash.
- * @param {string} hash
- * @param {string} salt
+ * Return true if the specifed clear text hashes to
+ * the specified hash parameter
  * @param {string} clearTextPassword
+ * @param {string} hash
  * @return {boolean}
+ *
  */
-function doesPasswordMatch(hash, salt, clearTextPassword) {
-    var testHash = crypto.createHash('sha1').update(clearTextPassword.concat(salt));
-    return hash === testHash.digest('hex');
+module.exports.checkPassword = function(clearTextPassword, hash) {
+    return bcrypt.compareAsync(clearTextPassword, hash);
 };
-
-module.exports.makePasswordEntry = makePasswordEntry;
-module.exports.doesPasswordMatch = doesPasswordMatch;

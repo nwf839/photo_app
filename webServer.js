@@ -31,9 +31,10 @@
  *
  */
 
+var Promise = require('bluebird');
 var mongoose = require('mongoose');
 var async = require('async');
-var fs = require('fs');
+var fs = Promise.promisifyAll(require('fs'));
 var password = require('./cs142password.js');
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
@@ -256,22 +257,26 @@ app.get('/comments/:id', function(request, response, next) {
 });
 
 app.post('/admin/login', function(request, response, next) {
-    var loginObj = request.body,
+    var loginCredentials = request.body,
         respond = sendResponse.bind(null, response),
         updateSession = function(user) {
             request.session.user = user;
             return user;
         },
-        checkPassword = function(passwordEntry) {
-            if (password.doesPasswordMatch(passwordEntry.password_digest, passwordEntry.salt, loginObj.password) === false) {
+        checkPassword = function(result) {
+            return password.checkPassword(loginCredentials.password, result.password_digest);
+        },
+        handleCheckResult = function(isMatch) {
+            if (isMatch === false) {
                 var err = new Error('invalid password');
                 err.status = 400;
                 throw err;
-            } else return User.findUserById(passwordEntry._id);
+            } else return User.findUserByLoginName(loginCredentials.login_name);
         };
 
-    User.getPasswordEntryFromUsername(loginObj.login_name)
+    User.findUserByLoginName(loginCredentials.login_name, 'password_digest')
         .then(checkPassword)
+        .then(handleCheckResult)
         .then(userQueryIsValid)
         .then(updateSession)
         .then(respond)
@@ -290,17 +295,14 @@ app.post('/admin/logout', function(request, response, next) {
 });
 
 app.post('/admin/register', function(request, response, next) {
-    var checkForUsername = function() {
-                if (User.userExists(request.body.login_name) === true) {
-                    var err = new Error('Username Already Exists');
-                    err.status = 400;
-                    throw err;
-                } else {
-                    return request.body.password;
-                }
-            },
-    registerUser = function(passwordEntry) {
-        request.body.salt = passwordEntry.salt;
+    var verifyNewUsername = function(userExists) {
+        if (userExists === true) {
+            var err = new Error('Username Already Exists');
+            err.status = 400;
+            throw err;
+        } else return request.body.password;
+    },
+    registerUser = function(hash) {
         request.body.password_digest = passwordEntry.hash;
         delete request.body.password;
         var user = new User(request.body);
@@ -309,8 +311,9 @@ app.post('/admin/register', function(request, response, next) {
     },
     respond = sendResponse.bind(null, response);
 
-    Promise.resolve(checkForUsername())
-        .then(password.makePasswordEntry)
+    User.userExists(request.body.login_name)
+        .then(verifyNewUsername)
+        .then(password.hashPassword)
         .then(registerUser)
         .then(respond)
         .catch(next);

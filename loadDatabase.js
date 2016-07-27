@@ -19,14 +19,17 @@
  *
  */
 
+var Promise = require('bluebird');
+
 // Function used to hash user passwords
-var makePasswordEntry = require('./cs142password.js').makePasswordEntry;
+var hashPassword = require('./cs142password.js').hashPassword;
 
 // Get the magic models we used in the previous projects.
 var cs142models = require('./modelData/photoApp.js').cs142models;
 
 // We use the Mongoose to define the schema stored in MongoDB.
 var mongoose = require('mongoose');
+require('mongoose').Promise = Promise;
 
 mongoose.connect('mongodb://localhost/cs142project6');
 
@@ -49,8 +52,8 @@ Promise.all(removePromises).then(function () {
     var userModels = cs142models.userListModel();
     var mapFakeId2RealId = {}; // Map from fake id to real Mongo _id
     var userPromises = userModels.map(function (user) {
-        return makePasswordEntry('weak')
-            .then(function(passwordEntry) {
+        return hashPassword('weak')
+            .then(function(hash) {
                 return User.create({
                     first_name: user.first_name,
                     last_name: user.last_name,
@@ -58,8 +61,7 @@ Promise.all(removePromises).then(function () {
                     description: user.description,
                     occupation: user.occupation,
                     login_name: user.last_name.toLowerCase(),
-                    password_digest: passwordEntry.hash,
-                    salt: passwordEntry.salt
+                    password_digest: hash,
                 }, function (err, userObj) {
                     if (err) {
                         console.error('Error create user', err);
@@ -68,6 +70,7 @@ Promise.all(removePromises).then(function () {
                         user.objectID = userObj._id;
                         console.log('Adding user:', user.first_name + ' ' + user.last_name, ' with ID ',
                             user.objectID);
+                        console.log(userObj);
                     }
                 });
             });
