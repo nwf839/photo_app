@@ -42,8 +42,13 @@ var Photo = require('./schema/photo.js');
 var SchemaInfo = require('./schema/schemaInfo.js');
 
 var express = require('express');
+var redis = require('redis');
 var session = require('express-session');
+var redisStore = require('connect-redis')(session);
 var bodyParser = require('body-parser');
+var client = redis.createClient();
+var passport = require('passport');
+var LocalStrategy = require('passport-local');
 var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
 var resize = require('imageMagick').resize;
@@ -55,9 +60,16 @@ mongoose.connect('mongodb://localhost/cs142project6');
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
 // the work for us.
 app.use(express.static(__dirname));
-app.use(session({secret: 'secretKey', resave: false, saveUninitialized: false}));
 app.use(bodyParser.json());
-
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(session({
+    secret: 'aIntNoBOdygonGeTDis', 
+    store: new redisStore({host: 'localhost', port: 6379, client: client, ttl: 260}),
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(function(err, request, response, next) {
     response.status(err.status || 500).send(err);
     next();
@@ -233,8 +245,6 @@ app.get('/photosOfUser/:id', function (request, response, next) {
 
 app.get('/comments/:id', function(request, response, next) {
     var id = request.params.id,
-        respond = sendResponse.bind(null, response),
-        fetchComments = function(id) {
             return Photo.getCommentsByUserId(id);
         };
         
@@ -245,6 +255,7 @@ app.get('/comments/:id', function(request, response, next) {
 });
 
 app.post('/admin/login', function(request, response, next) {
+    passport.use(new LocalStrategy(username, password, done) {
     var loginObj = request.body,
         respond = sendResponse.bind(null, response),
         updateSession = function(user) {
@@ -257,7 +268,7 @@ app.post('/admin/login', function(request, response, next) {
                 err.status = 400;
                 throw err;
             } else return User.findUserById(passwordEntry._id);
-        };
+        },
 
     User.getPasswordEntryFromUsername(loginObj.login_name)
         .then(checkPassword)
@@ -265,6 +276,7 @@ app.post('/admin/login', function(request, response, next) {
         .then(updateSession)
         .then(respond)
         .catch(next);
+    });
 });
 
 app.post('/admin/logout', function(request, response, next) {
