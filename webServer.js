@@ -245,6 +245,7 @@ app.get('/photosOfUser/:id', function (request, response, next) {
 
 app.get('/comments/:id', function(request, response, next) {
     var id = request.params.id,
+        fetchComments = function() {
             return Photo.getCommentsByUserId(id);
         };
         
@@ -255,7 +256,6 @@ app.get('/comments/:id', function(request, response, next) {
 });
 
 app.post('/admin/login', function(request, response, next) {
-    passport.use(new LocalStrategy(username, password, done) {
     var loginObj = request.body,
         respond = sendResponse.bind(null, response),
         updateSession = function(user) {
@@ -268,7 +268,7 @@ app.post('/admin/login', function(request, response, next) {
                 err.status = 400;
                 throw err;
             } else return User.findUserById(passwordEntry._id);
-        },
+        };
 
     User.getPasswordEntryFromUsername(loginObj.login_name)
         .then(checkPassword)
@@ -276,7 +276,6 @@ app.post('/admin/login', function(request, response, next) {
         .then(updateSession)
         .then(respond)
         .catch(next);
-    });
 });
 
 app.post('/admin/logout', function(request, response, next) {
