@@ -153,6 +153,10 @@ app.get('/test/:p1', function (request, response) {
  */
 app.get('/user/list', function (request, response, next) {
     var respond = sendResponse.bind(null, response),
+        userList = [],
+    setUserList = function(result) {
+        userList = result;
+    },
     getPhotoCounts = function() {
         return Photo.getPhotoCounts();
     },
@@ -160,39 +164,32 @@ app.get('/user/list', function (request, response, next) {
         return Photo.getCommentCounts();
     },
     fetchData = function(result) {
-        return Promise.all([branch(getPhotoCounts, result), branch(getCommentCounts, result)])
-            // XXX HACK: Promise.all used to allow parallel processing of model, but returns
-            //           a copy of the model for each branch. There is most likely a more elegant
-            //           way of doing this, possible by not returning this part at all...
-            .then(function(result) {
-                return result[0];
-            });
+        return Promise.join(branch(getPhotoCounts), branch(getCommentCounts), function() {
+            return userList;
+        });
     },
-    branch = function(srcFn, result) {
-        return srcFn()
+    branch = function(countFn) {
+        return countFn()
             .then(copyDoc)
-            .then(merge.bind(null, result));
+            .then(mergeCountsToList);
     },
-    merge = function(targArray, srcArray) {
-        var key = Object.keys(srcArray[0])[1];
-        return map(function(elem) {
-            var i;
-            var found = false;
-            for (i = 0; i < srcArray.length; i++) {
-                if (elem._id === srcArray[i]._id) {
-                    found = true;
-                    break;
-                }
-            }
-            if (found === true) elem[key] = srcArray[i][key];
-            else elem[key] = 0;
-            return elem;
-        }, targArray);
-                 
+    mergeCountsToList = function(counts) {
+        return Promise.map(userList, addCountToListItem.bind(null, counts));
+    },
+    addCountToListItem = function(counts, listItem) {
+        var key = Object.keys(counts[0])[1];
+        return Promise.filter(counts, function(countsItem) {
+            return countsItem._id === listItem._id;
+        }).then(function(result) {
+            if (result.length === 1) listItem[key] = result[0][key];
+            else listItem[key] = 0;
+            return listItem;
+        });
     };
 
     User.generateUserList()
         .then(copyDoc)
+        .then(setUserList)
         .then(fetchData)
         .then(respond)
         .catch(next);
@@ -220,6 +217,7 @@ app.get('/user/:id', function (request, response, next) {
  * URL /photosOfUser/:id - Return the Photos for User (id)
  */
 app.get('/photosOfUser/:id', function (request, response, next) {
+    // XXX NEEDS REFACTOR
     // id extracted from routing parameters
     var id = request.params.id,
 
