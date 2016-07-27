@@ -5,7 +5,9 @@
   "main": "webServer.js",
   "scripts": {
     "test": "echo Test your code by opening http://localhost:3000 in your browser.",
-    "jshint": "./node_modules/.bin/jshint --config .jshintrc --exclude=node_modules,test . || exit 0"
+    "jshint": "./node_modules/.bin/jshint --config .jshintrc --exclude=node_modules,test . || exit 0",
+    "build-css": "~/bin/build-css",
+    "watch-css": "~/bin/watch-css"
   },
   "author": "Mendel Rosenblum <mendel@cs.stanford.edu> (http://www.stanford.edu/~mendel)",
   "license": "ISC",
@@ -25,5 +27,9 @@
     "mocha": "^2.5.3",
     "mongoose": "^4.3.4",
     "multer": "^1.1.0"
+  },
+  "devDependencies": {
+    "node-sass": "^3.8.0",
+    "nodemon": "^1.10.0"
   }
 }

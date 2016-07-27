@@ -1,9 +1,9 @@
 <div ui-view="top"></div>
 
 <div class="container" flex layout="row">
-    <md-sidenav md-is-locked-open="true" class="md-whiteframe-z2">
+    <div ui-view="side"></div>
+    <md-sidenav class="md-white-frame-z2">
         <div ui-view="side"></div>
     </md-sidenav>
     <div class="display" ui-view="main"></div>
 </div>
-

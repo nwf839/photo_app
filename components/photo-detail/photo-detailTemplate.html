@@ -1,10 +1,10 @@
 <md-card ng-model="userPhotoDetail.photo">
-    <div class="pa-image-container">
-        <img ng-src="images/{{photoDetail.photo.file_name}}"></img>
+    <div class="image-pane">
+        <img ng-src="assets/images/{{photoDetail.photo.file_name}}"></img>
         <span class="md-caption">Added: {{photoDetail.photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
     </div>
     <md-card-actions layout="column">
-        <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photoDetail.photo.comments track by comment._id" ui-sref="users({id: comment.user._id})">
+        <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photoDetail.photo.comments track by comment._id" ui-sref="users.detail({userId: comment.user._id})">
             <div class="md-list-item-text">
                 <h3>{{comment.user.first_name}} {{comment.user.last_name}}</h3>
                 <p>{{comment.comment}}</p>
