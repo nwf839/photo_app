@@ -49,13 +49,13 @@ var redisStore = require('connect-redis')(session);
 var bodyParser = require('body-parser');
 var client = redis.createClient();
 var passport = require('passport');
-var LocalStrategy = require('passport-local');
 var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
 var resize = require('imageMagick').resize;
 var app = express();
 
 require('mongoose').Promise = Promise;
+require('./passport.js')(passport);
 mongoose.connect('mongodb://localhost/cs142project6');
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
