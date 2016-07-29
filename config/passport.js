@@ -1,7 +1,7 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Password = require('./cs142password.js');
+var Password = require('./helpers/cs142password.js');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('./schema/user.js');
 

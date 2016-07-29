@@ -22,7 +22,7 @@
 var Promise = require('bluebird');
 
 // Function used to hash user passwords
-var hashPassword = require('./cs142password.js').hashPassword;
+var hashPassword = require('./helpers/cs142password.js').hashPassword;
 
 // Get the magic models we used in the previous projects.
 var cs142models = require('./modelData/photoApp.js').cs142models;

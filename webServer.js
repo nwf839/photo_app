@@ -35,7 +35,7 @@ var Promise = require('bluebird');
 var mongoose = require('mongoose');
 var async = require('async');
 var fs = Promise.promisifyAll(require('fs'));
-var password = require('./cs142password.js');
+var password = require('./helpers/cs142password.js');
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require('./schema/user.js');
