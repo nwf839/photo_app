@@ -36,6 +36,7 @@ var mongoose = require('mongoose');
 var async = require('async');
 var fs = Promise.promisifyAll(require('fs'));
 var password = require('./helpers/cs142password.js');
+var flash = require('connect-flash');
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require('./schema/user.js');
@@ -55,7 +56,7 @@ var resize = require('imageMagick').resize;
 var app = express();
 
 require('mongoose').Promise = Promise;
-require('./passport.js')(passport);
+require('./config/passport.js')(passport);
 mongoose.connect('mongodb://localhost/cs142project6');
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
@@ -71,6 +72,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash());
 app.use(function(err, request, response, next) {
     response.status(err.status || 500).send(err);
     next();
@@ -254,7 +256,9 @@ app.get('/comments/:id', function(request, response, next) {
         .catch(next);
 });
 
-app.post('/admin/login', function(request, response, next) {
+app.post('/admin/login', passport.authenticate('local-signup', {failureFlash: true});
+    
+   /* function(request, response, next) {
     var loginCredentials = request.body,
         respond = sendResponse.bind(null, response),
         updateSession = function(user) {
@@ -279,7 +283,7 @@ app.post('/admin/login', function(request, response, next) {
         .then(updateSession)
         .then(respond)
         .catch(next);
-});
+});*/
 
 app.post('/admin/logout', function(request, response, next) {
     var updateSession = function(request) {

@@ -4,7 +4,10 @@
  */
 /* jshint node: true */
 
+var Promise = require('bluebird');
 var mongoose = require('mongoose');
+const bcrypt = Promise.promisifyAll(require('bcrypt'));
+const saltrounds = 10;
 
 // create a schema
 var userSchema = new mongoose.Schema({
@@ -16,11 +19,21 @@ var userSchema = new mongoose.Schema({
     occupation: String,    // Occupation of the user.
     login_name: String,  // Login name of the user
     password_digest: String,    // Password digest salted user's salted password
-    salt: String    // Salt used to hash user's password
 });
 
-// static methods
+userSchema.pre('save', function(next) {
+    var user = this;
+    if (!user.isModified) return next();
 
+    bcrypt.genSaltAsync(saltrounds)
+        .then(function(salt) {
+            return bcrypt.hashAsync(user.password_digest, salt);
+        }).then(function(hash) {
+            user.password_digest = hash;
+        }).asCallback(next);
+});
+
+// Static Methods
 // Generates list of all Users with only their ids, first names, and last names
 userSchema.statics.generateUserList = function() {
     return this.find({}).select('_id first_name last_name').sort({_id: 1}).exec();
@@ -52,6 +65,11 @@ userSchema.statics.getPasswordHash = function(login_name) {
     return this.findOne({login_name: login_name}).select('password_digest').exec();
 };
 
+// Instance Methods
+// Compares supplied password with hash of schema instance
+userSchema.methods.comparePassword = function(password) {
+    return bcrypt.comapareAsync(password, this.password_digest);
+};
 // the schema is useless so far
 // we need to create a model using it
 var User = mongoose.model('User', userSchema);

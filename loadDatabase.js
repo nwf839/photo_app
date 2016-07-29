@@ -21,9 +21,6 @@
 
 var Promise = require('bluebird');
 
-// Function used to hash user passwords
-var hashPassword = require('./helpers/cs142password.js').hashPassword;
-
 // Get the magic models we used in the previous projects.
 var cs142models = require('./modelData/photoApp.js').cs142models;
 
@@ -52,8 +49,6 @@ Promise.all(removePromises).then(function () {
     var userModels = cs142models.userListModel();
     var mapFakeId2RealId = {}; // Map from fake id to real Mongo _id
     var userPromises = userModels.map(function (user) {
-        return hashPassword('weak')
-            .then(function(hash) {
                 return User.create({
                     first_name: user.first_name,
                     last_name: user.last_name,
@@ -61,7 +56,7 @@ Promise.all(removePromises).then(function () {
                     description: user.description,
                     occupation: user.occupation,
                     login_name: user.last_name.toLowerCase(),
-                    password_digest: hash,
+                    password_digest: 'weak',
                 }, function (err, userObj) {
                     if (err) {
                         console.error('Error create user', err);
@@ -73,7 +68,6 @@ Promise.all(removePromises).then(function () {
                         console.log(userObj);
                     }
                 });
-            });
     });
 
 
