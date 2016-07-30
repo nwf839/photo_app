@@ -1,63 +1,66 @@
 'use strict';
 
 var Promise = require('bluebird');
-var Password = require('./helpers/cs142password.js');
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('./schema/user.js');
+var User = require('../schema/user.js');
 
 
 module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
-        Promise.resolve(user._id).asCallback(done);
+        Promise.resolve(user._id).asCallback(done); 
     });
 
     passport.deserializeUser(function(id, done) {
-        User.findById(id).asCallback(done);
+        User.findById(id)
+        // XXX PASSPORT ONLY WORKS WITH THIS EXTRA STEP
+        // NO IDEA WHY, PROBABLY HAS TO DO WITH .asCallback
+           .then(function(result) {
+               return result;
+           }).asCallback(done);
     });
     
-    passport.use('login', new LocalStrategy({passReqToCallback: true}, 
-        function(request, login_name, password, done) {
-            var user = false;
-            var message = 'Login Successful';
-            User.findUserByLoginName(login_name)
-                .then(function(result) {
-                    if (result === null) {
-                        message = 'Invalid Username';
-                        return true;
-                    } else {
-                        user = result;
-                        return Password.checkPassword(user.password_digest);
-                    }
-                }).then(function(isMatch) {
-                    if (isMatch === false) {
-                        user = false;
-                        message = 'Invalid Password';
-                    }
-                    return [user, message];
-                }).asCallback(done, {spread: true});
-        }));
+    passport.use('login', new LocalStrategy(function(username, password, done) {
+        var user = {};
+        User.findUserByLoginName(username)
+            .then(function(result) {
+                if (result === null) {
+                    var err = new Error('Username Invalid');
+                    err.status = 401;
+                    throw err;
+                }
+                user = result;
+                return user.comparePassword(password);
+            }).then(function(isMatch) {
+                if (isMatch === false) {
+                    var err = new Error('Invalid Password');
+                    err.status = 401;
+                    throw err;
+                }
+                return user;
+            }).asCallback(done);
+    }));
 
-    passport.use('register', new LocalStrategy({passReqToCallback: true},
-        function(request, login_name, password, done) {
-            var user = false;
-            var message = 'Registration Successful';
-            User.findUserByLoginName(login_name, '_id')
+    passport.use('register', new LocalStrategy({
+        passReqToCallback: true
+    }, function(request, username, password, done) {
+        var user = {};
+            User.findUserByLoginName(username, '_id')
                 .then(function(result) {
                     if (result !== null) {
-                        message = 'Username Already Taken';
+                        var err = new Error('Username Already in Use');
+                        err.status = 401;
+                        throw err;
                     } else {
-                        return Password.hashPassword(password);
+                        return result;
                     }
                 }).then(function(result) {
-                    request.body.password_digest = result;
-                    delete request.body.password;
-                    user = new User(request.body);
-                    return user.save()
-                        .then(function() {
-                            return [user, message];
+                    console.log(request.body);
+                    var newUser = new User(request.body);
+                    return newUser.save()
+                        .then(function(result) {
+                            user = result;
+                            return user;
                         });
-                }).asCallback(done, {spread: true});
+                }).asCallback(done);
         }));
-};
-                    
 };

@@ -14,11 +14,11 @@ cs142App.controller('LoginRegisterController', ['$scope', 'Session',
       };
 
       $scope.curUser = {};
-      $scope.curUser.login_name = '';
+      $scope.curUser.username = '';
       $scope.curUser.password = '';
 
       $scope.newUser = {};
-      $scope.newUser.login_name = '';
+      $scope.newUser.username = '';
       $scope.newUser.password = '';
       $scope.passwordValidation = '';
       $scope.newUser.first_name = '';

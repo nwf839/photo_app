@@ -55,8 +55,8 @@ Promise.all(removePromises).then(function () {
                     location: user.location,
                     description: user.description,
                     occupation: user.occupation,
-                    login_name: user.last_name.toLowerCase(),
-                    password_digest: 'weak',
+                    username: user.last_name.toLowerCase(),
+                    password: 'weak',
                 }, function (err, userObj) {
                     if (err) {
                         console.error('Error create user', err);

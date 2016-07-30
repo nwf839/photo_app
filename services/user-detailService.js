@@ -3,7 +3,7 @@
 services.factory('UserDetailService', ['$resource', function($resource) {
         var user = {},
             userId = null,
-            resource = $resource('/user/:id'),
+            resource = $resource('/user/:id', {}, {withCredentials: true}),
             setUser = function(response) {
                 user = response.toJSON();
                 userId = user._id;

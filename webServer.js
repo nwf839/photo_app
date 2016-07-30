@@ -35,14 +35,13 @@ var Promise = require('bluebird');
 var mongoose = require('mongoose');
 var async = require('async');
 var fs = Promise.promisifyAll(require('fs'));
-var password = require('./helpers/cs142password.js');
-var flash = require('connect-flash');
 
 // Load the Mongoose schema for User, Photo, and SchemaInfo
 var User = require('./schema/user.js');
 var Photo = require('./schema/photo.js');
 var SchemaInfo = require('./schema/schemaInfo.js');
 
+var logger = require('morgan');
 var express = require('express');
 var redis = require('redis');
 var session = require('express-session');
@@ -61,22 +60,29 @@ mongoose.connect('mongodb://localhost/cs142project6');
 
 // We have the express static module (http://expressjs.com/en/starter/static-files.html) do all
 // the work for us.
-app.use(express.static(__dirname));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(session({
-    secret: 'aIntNoBOdygonGeTDis', 
-    store: new redisStore({host: 'localhost', port: 6379, client: client, ttl: 260}),
-    resave: false,
-    saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-app.use(function(err, request, response, next) {
-    response.status(err.status || 500).send(err);
-    next();
-});
+    app.use(express.static(__dirname));
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({extended: true}));
+    app.use(session({
+        //cookie: {maxAge: 3600000},
+        secret: 'aIntNoBOdygonGeTDis', 
+        store: new redisStore({host: 'localhost', port: 6379, client: client, ttl: 260}),
+        resave: false,
+        saveUninitialized: false,
+    }));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(function(err, request, response, next) {
+        response.status(err.status || 500).send(err);
+        next();
+    });
+
+function ensureAuthenticated(request, response, next) {
+    if (request.isAuthenticated()) return next();
+    var err = new Error('Authentication Failed');
+    err.status = 401;
+    return next(err);
+};
 
 app.get('/', function (request, response) {
     response.send('Simple web server of files from ' + __dirname);
@@ -154,8 +160,8 @@ app.get('/test/:p1', function (request, response) {
  * URL /user/list - Return all the User object.
  */
 app.get('/user/list', function (request, response, next) {
-    var respond = sendResponse.bind(null, response),
-        userList = [],
+    var userList = [],
+        respond = sendResponse.bind(null, response),
     setUserList = function(result) {
         userList = result;
     },
@@ -200,25 +206,17 @@ app.get('/user/list', function (request, response, next) {
 /*
  * URL /user/:id - Return the information for User (id)
  */
-app.get('/user/:id', function (request, response, next) {
-    var id = request.params.id,
-        respond = sendResponse.bind(null, response),
-        fetchUser = function(id) {
-            return User.findUserById(id, '_id first_name last_name location occupation description');
-        };
-
-    Promise.resolve(isAuthorized(request, id))
-        .then(userIdIsValid)
-        .then(fetchUser)
+app.get('/user/:id', ensureAuthenticated, function (request, response, next) {
+    User.findUserById(request.params.id, '_id first_name last_name location occupation description')
         .then(userQueryIsValid)
-        .then(respond)
+        .then(sendResponse.bind(null, response))
         .catch(next);
 });
 
 /*
  * URL /photosOfUser/:id - Return the Photos for User (id)
  */
-app.get('/photosOfUser/:id', function (request, response, next) {
+app.get('/photosOfUser/:id', ensureAuthenticated, function (request, response, next) {
     // XXX NEEDS REFACTOR
     // id extracted from routing parameters
     var id = request.params.id,
@@ -229,6 +227,10 @@ app.get('/photosOfUser/:id', function (request, response, next) {
         fetchUser = function(id) {
             return User.findUserById(id, '_id first_name last_name');
         },
+        print = function(val) {
+            console.log(val);
+            return val;
+        },
         respond = sendResponse.bind(null, response),
         // Array.map method wrapper converts elements to promises that need to be resolved before returning a result
         mapPhotos = function(photos) {
@@ -236,92 +238,41 @@ app.get('/photosOfUser/:id', function (request, response, next) {
             return map(modify, photos);
         };
 
-    Promise.resolve(isAuthorized(request, id))
-        .then(fetchPhotos)
+    fetchPhotos(id)
+        .then(print)
         .then(copyDoc)
         .then(mapPhotos)
         .then(respond)
         .catch(next);
 });
 
-app.get('/comments/:id', function(request, response, next) {
-    var id = request.params.id,
-        fetchComments = function() {
-            return Photo.getCommentsByUserId(id);
-        };
-        
-    Promise.resolve(isAuthorized(request, id))
-        .then(fetchComments)
-        .then(respond)
-        .catch(next);
-});
-
-app.post('/admin/login', passport.authenticate('local-signup', {failureFlash: true});
-    
-   /* function(request, response, next) {
-    var loginCredentials = request.body,
-        respond = sendResponse.bind(null, response),
-        updateSession = function(user) {
-            request.session.user = user;
-            return user;
-        },
-        checkPassword = function(result) {
-            return password.checkPassword(loginCredentials.password, result.password_digest);
-        },
-        handleCheckResult = function(isMatch) {
-            if (isMatch === false) {
-                var err = new Error('invalid password');
-                err.status = 400;
-                throw err;
-            } else return User.findUserByLoginName(loginCredentials.login_name);
-        };
-
-    User.findUserByLoginName(loginCredentials.login_name, 'password_digest')
-        .then(checkPassword)
-        .then(handleCheckResult)
-        .then(userQueryIsValid)
-        .then(updateSession)
-        .then(respond)
-        .catch(next);
-});*/
-
-app.post('/admin/logout', function(request, response, next) {
-    var updateSession = function(request) {
-        request.session.user = null;
-        return null;
-    }
-
-    Promise.resolve(updateSession(request))
+app.get('/comments/:id', ensureAuthenticated, function(request, response, next) {
+    Photo.getCommentsByUserId(request.params.id)
         .then(sendResponse.bind(null, response))
         .catch(next);
 });
 
-app.post('/admin/register', function(request, response, next) {
-    var verifyNewUsername = function(userExists) {
-        if (userExists === true) {
-            var err = new Error('Username Already Exists');
-            err.status = 400;
-            throw err;
-        } else return request.body.password;
-    },
-    registerUser = function(hash) {
-        request.body.password_digest = passwordEntry.hash;
-        delete request.body.password;
-        var user = new User(request.body);
-        user.save();
-        return user;
-    },
-    respond = sendResponse.bind(null, response);
+app.post('/admin/login', passport.authenticate('login', {session: true}), function(request, response, next) {
+    response.status(200).send(request.user);
+});
 
-    User.userExists(request.body.login_name)
-        .then(verifyNewUsername)
-        .then(password.hashPassword)
-        .then(registerUser)
-        .then(respond)
+app.post('/admin/logout', function(request, response, next) {
+    Promise.resolve(request.logOut())
+        .then(function() {
+            request.session.destroy();
+        }).then(sendResponse.bind(null, response))
         .catch(next);
 });
 
-app.post('/commentsOfPhoto/:photoId', function(request, response, next) {
+app.post('/admin/register', function(request, response, next) {
+    // XXX May need to change
+    passport.authenticate('register', function(err, user, info) {
+        if (err) return next(err);
+        sendResponse(response, user);
+    })(request, response, next);
+});
+
+app.post('/commentsOfPhoto/:photoId', ensureAuthenticated, function(request, response, next) {
     var id = request.params.photoId,
         comment = {
             comment: request.body.comment,
@@ -337,7 +288,7 @@ app.post('/commentsOfPhoto/:photoId', function(request, response, next) {
         .catch(next)
 });
 
-app.post('/photos/new', function(request, response, next) {
+app.post('/photos/new', ensureAuthenticated, function(request, response, next) {
     processFormBody(request, response, function(err) {
         console.log(request.session);
         if (!request.file) {

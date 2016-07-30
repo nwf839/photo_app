@@ -1,13 +1,12 @@
 services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'UserDetailService', 'UserPhotosService',
         function($rootScope, $resource, $state, $timeout, UserDetailService, UserPhotosService) {
             var user = {},
-                loginResource = $resource('/admin/login'),
-                logoutResource = $resource('/admin/logout'),
+                loginResource = $resource('/admin/login', {}),
+                logoutResource = $resource('/admin/logout', {}, {withCredentials: true}),
                 registerResource = $resource('/admin/register'),
                 loggedIn = false,
                 setUser = function(response) {
                     user = response.toJSON();
-                    console.log(user);
                     loggedIn = (Object.keys(user).length !== 0);
                     if (loggedIn === false) $timeout($state.go('login-register.login'));
                     $rootScope.$emit('sessionChanged');

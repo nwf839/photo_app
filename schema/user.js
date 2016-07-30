@@ -17,8 +17,8 @@ var userSchema = new mongoose.Schema({
     location: String,    // Location  of the user.
     description: String,  // A brief user description
     occupation: String,    // Occupation of the user.
-    login_name: String,  // Login name of the user
-    password_digest: String,    // Password digest salted user's salted password
+    username: String,  // Login name of the user
+    password: String,    // Password digest salted user's salted password
 });
 
 userSchema.pre('save', function(next) {
@@ -27,9 +27,9 @@ userSchema.pre('save', function(next) {
 
     bcrypt.genSaltAsync(saltrounds)
         .then(function(salt) {
-            return bcrypt.hashAsync(user.password_digest, salt);
+            return bcrypt.hashAsync(user.password, salt);
         }).then(function(hash) {
-            user.password_digest = hash;
+            user.password = hash;
         }).asCallback(next);
 });
 
@@ -46,29 +46,29 @@ userSchema.statics.findUserById = function(id, projection) {
     return query.exec();
 };
 
-userSchema.statics.findUserByLoginName = function(login_name, projection) {
-    var query = this.findOne({login_name: login_name});
+userSchema.statics.findUserByLoginName = function(username, projection) {
+    var query = this.findOne({username: username});
     if (projection) query = query.select(projection);
     return query.exec();
 };
 
 // Returns true if username already exists in database
-userSchema.statics.userExists = function(login_name) {
-    return this.findOne({login_name: login_name}).select('_id').exec()
+userSchema.statics.userExists = function(username) {
+    return this.findOne({username: username}).select('_id').exec()
         .then(function(result) {
             return result !== null;
         });
 };
 
 // Returns salt from userId
-userSchema.statics.getPasswordHash = function(login_name) {
-    return this.findOne({login_name: login_name}).select('password_digest').exec();
+userSchema.statics.getPasswordHash = function(username) {
+    return this.findOne({username: username}).select('password').exec();
 };
 
 // Instance Methods
 // Compares supplied password with hash of schema instance
 userSchema.methods.comparePassword = function(password) {
-    return bcrypt.comapareAsync(password, this.password_digest);
+    return bcrypt.compareAsync(password, this.password);
 };
 // the schema is useless so far
 // we need to create a model using it
