@@ -14,11 +14,9 @@ var Promise = require('bluebird'),
     photosDir = path.join(__dirname, '../assets/images/');
 
 module.exports.getPhotos = function(request, response, next) {
-    console.log(request.params);
     Photo.findPhotosByUserId(request.params.id)
         .then(copyMongoDoc)
         .then(function(photos) {
-            console.log(photos);
             return Promise.map(photos, comments.modifyComments.bind(null, next));
         }).then(respondOnSuccess.bind(null, response))
         .catch(next);

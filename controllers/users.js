@@ -20,10 +20,6 @@ module.exports.getUsers = function (request, response, next) {
     getCommentCounts = function() {
         return Photo.getCommentCounts()
             .then(copyMongoDoc)
-            .then(function(result) {
-                console.log(result);
-                return result;
-            })
             .then(mergeCountsToList);
     },
     fetchData = function(result) {

@@ -12,12 +12,21 @@ var Promise = require('bluebird'),
 
 module.exports.getComments = function(request, response, next) {
     Photo.getCommentsByUserId(request.params.id)
+        .then(function(result) {
+            console.log(result);
+            return result;
+        })
         .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };
 
 module.exports.addComment = function(request, response, next) {
-    Photo.findByIdAndUpdate(request.params.photoId, request.user._id, request.body.comment)
+    console.log(request.params.photoId, request.user._id, request.body.comment);
+    Photo.addComment(request.params.photoId, request.user._id, request.body.comment)
+        .then(function(result) {
+            console.log(result);
+            return result;
+        })
         .then(copyMongoDoc)
         .then(module.exports.modifyComments.bind(null, next))
         .then(respondOnSuccess.bind(null, response))
@@ -26,7 +35,6 @@ module.exports.addComment = function(request, response, next) {
 
 // XXX: DOES NOT WORK, AT LEAST ON FRONT END
 module.exports.modifyComments = function(next, photo) {
-    console.log(photo);
     return Promise.map(photo.comments, function(comment) {
         return User.findUserById(comment.user_id, '_id first_name last_name')
             .then(copyMongoDoc)
@@ -36,7 +44,6 @@ module.exports.modifyComments = function(next, photo) {
                 return comment;
             }).catch(next);
     }).then(function(comments) {
-        console.log(comments);
         photo.comments = comments;
         return photo;
     }).catch(next);

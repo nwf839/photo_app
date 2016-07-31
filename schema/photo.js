@@ -38,14 +38,7 @@ photoSchema.statics.findPhotosByUserId = function(id) {
 // Returns photo matching specified id and pushes adds comment
 // object
 photoSchema.statics.addComment = function(photoId, userId, comment) {
-    return this.findbyIdAndUpdate(photoId, 
-        {$push: {
-            'comments': {
-                comment: comment,
-                user_id: userId
-            }
-        }},
-    {new: true}).exec();
+    return this.findByIdAndUpdate(photoId, {$push: {"comments": {comment: comment, user_id: userId}}}, {new: true}).exec()
 };
 
 // Returns all userIds from comments
@@ -80,12 +73,12 @@ photoSchema.statics.getCommentsByUserId = function(id) {
         [
             { $unwind: '$comments' },
             { $project: { 
+                    _id: '$comments._id',
                     comment: '$comments.comment',
                     date_time: '$comments.date_time',
                     user_id: '$comments.user_id',
             }},
             { $match: { user_id: mongoose.Types.ObjectId(id)}}
-            //{ $group: { _id: '$comments.user_id', comments: {$sum: 1} }}
         ]);
 }
 
