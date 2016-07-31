@@ -1,7 +1,7 @@
 'use strict';
 
-cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentService', 'photoDetail', 'Session',
-    function($scope, $state, AddCommentService, photoDetail, Session) {
+cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentService', 'photoDetail', 'Session', 'list', '$interval',
+    function($scope, $state, AddCommentService, photoDetail, Session, list, $interval) {
     var replacePhoto = function(photo) {
         $scope.photoDetail.photo = photo;
         $scope.photoDetail.commentModel.comment = '';
@@ -13,6 +13,10 @@ cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentSer
             .then(replacePhoto);
     };
 
+    $scope.photoDetail.userList = list;
+    angular.forEach($scope.photoDetail.userList, function(item) {
+        item.label = item.first_name + ' ' + item.last_name;
+    });
     // XXX Would probably make more sense bound to main scope
     $scope.photoDetail.user = Session.getUser();
 
@@ -41,4 +45,6 @@ cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentSer
     $scope.prev = function() {
         if ($scope.main.curIndex > 0) $scope.select($scope.main.curIndex - 1);
     };
+
+    $scope.curTime = 
 }]);

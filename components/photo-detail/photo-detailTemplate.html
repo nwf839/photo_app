@@ -4,6 +4,7 @@
         <span class="md-caption">Added: {{photoDetail.photo.date_time | date:'MM/dd/yyyy @ h:mma'}}</span>
     </div>
     <md-card-actions layout="column">
+        <md-list>
         <md-list-item class="md-3-line md-long-text" ng-repeat="comment in photoDetail.photo.comments track by comment._id" ui-sref="users.detail({userId: comment.user._id})">
             <div class="md-list-item-text">
                 <h3>{{comment.user.first_name}} {{comment.user.last_name}}</h3>
@@ -11,20 +12,26 @@
                 <p class="md-caption">{{comment.date_time | date:'MM/dd/yyyy @ h:mma'}}</p>
             </div>
         </md-list-item>
-        <md-list-item class="md-2-line md-long-text" ng-show="!commentIsEmpty">
+        <md-list-item class="md-3-line md-long-text md-no-style md-ink-ripple" ng-show="!commentIsEmpty">
             <div class="md-list-item-text">
                 <h3>{{photoDetail.user.first_name}} {{photoDetail.user.last_name}}</h3>
                 <p ng-bind="photoDetail.commentModel.comment"></p>
-                <!-- PLACEHOLDER: Could add a directive or element to track current time -->
+                <p class="md-caption" pa-current-time></p>
             </div>
         </md-list-item>
-        <md-list-item>
-            <md-input-container>
+        <md-list-item class="md-3-line md-no-style flex md-long-text md-ink-ripple">
+            <md-input-container flex>
                 <label>Comment</label>
-                <textarea ng-model="photoDetail.commentModel.comment"></textarea>
+                <textarea mentio
+                    mentio-typed-text="typed-term"
+                    mentio-trigger-char="'@'"
+                    mentio-items="photoDetail.userList | filter:label:typedTerm"
+                    ng-model="photoDetail.commentModel.comment"
+                    rows="3"></textarea>
                 <md-button ng-click="photoDetail.addComment()">Add Comment</md-button>
             </md-input-container>
         </md-list-item>
+        </md-list>
     </md-card-actions>
 </md-card>
 <md-toolbar>
@@ -34,3 +41,12 @@
         <md-button ng-click="next()">&gt;</md-button>
     </div>
 </md-toolbar>
+<!--
+<script type="text/ng-template" id="/people-mentions.tpl">
+    <md-list>
+        <md-list-item mentio-menu-item="user" ng-repeat="user in items">
+            <span ng-bind-html="user.label | mentioHighlight:typedTerm:'menu-highlighted' | unsafe"></span>
+        </md-list-item>
+    </md-list>
+</script>
+-->

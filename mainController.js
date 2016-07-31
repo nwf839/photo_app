@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
-var cs142App = angular.module('cs142App', ['ngRoute', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
+var cs142App = angular.module('cs142App', ['mentio', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
 cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/login-register/login');
