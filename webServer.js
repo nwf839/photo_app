@@ -36,16 +36,6 @@ var mongoose = require('mongoose');
 var async = require('async');
 var fs = Promise.promisifyAll(require('fs'));
 
-// Load the Mongoose schema for User, Photo, and SchemaInfo
-var User = require('./schema/user.js');
-var Photo = require('./schema/photo.js');
-var SchemaInfo = require('./schema/schemaInfo.js');
-
-var comments = require('./controllers/comments.js');
-var photos = require('./controllers/photos.js');
-var users = require('./controllers/users.js');
-var admin = require('./controllers/admin.js');
-
 var logger = require('morgan');
 var express = require('express');
 var redis = require('redis');
