@@ -41,6 +41,11 @@ var User = require('./schema/user.js');
 var Photo = require('./schema/photo.js');
 var SchemaInfo = require('./schema/schemaInfo.js');
 
+var comments = require('./controllers/comments.js');
+var photos = require('./controllers/photos.js');
+var users = require('./controllers/users.js');
+var admin = require('./controllers/admin.js');
+
 var logger = require('morgan');
 var express = require('express');
 var redis = require('redis');
@@ -51,7 +56,6 @@ var client = redis.createClient();
 var passport = require('passport');
 var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
-var resize = require('imageMagick').resize;
 var app = express();
 
 require('mongoose').Promise = Promise;
@@ -159,246 +163,31 @@ app.get('/test/:p1', function (request, response) {
 /*
  * URL /user/list - Return all the User object.
  */
-app.get('/user/list', function (request, response, next) {
-    var userList = [],
-        respond = sendResponse.bind(null, response),
-    setUserList = function(result) {
-        userList = result;
-    },
-    getPhotoCounts = function() {
-        return Photo.getPhotoCounts();
-    },
-    getCommentCounts = function() {
-        return Photo.getCommentCounts();
-    },
-    fetchData = function(result) {
-        return Promise.join(branch(getPhotoCounts), branch(getCommentCounts), function() {
-            return userList;
-        });
-    },
-    branch = function(countFn) {
-        return countFn()
-            .then(copyDoc)
-            .then(mergeCountsToList);
-    },
-    mergeCountsToList = function(counts) {
-        return Promise.map(userList, addCountToListItem.bind(null, counts));
-    },
-    addCountToListItem = function(counts, listItem) {
-        var key = Object.keys(counts[0])[1];
-        return Promise.filter(counts, function(countsItem) {
-            return countsItem._id === listItem._id;
-        }).then(function(result) {
-            if (result.length === 1) listItem[key] = result[0][key];
-            else listItem[key] = 0;
-            return listItem;
-        });
-    };
-
-    User.generateUserList()
-        .then(copyDoc)
-        .then(setUserList)
-        .then(fetchData)
-        .then(respond)
-        .catch(next);
-});
+app.get('/user/list', users.getUsers);
 
 /*
  * URL /user/:id - Return the information for User (id)
  */
-app.get('/user/:id', ensureAuthenticated, function (request, response, next) {
-    User.findUserById(request.params.id, '_id first_name last_name location occupation description')
-        .then(userQueryIsValid)
-        .then(sendResponse.bind(null, response))
-        .catch(next);
-});
+app.get('/user/:id', ensureAuthenticated, users.getUser);
 
 /*
  * URL /photosOfUser/:id - Return the Photos for User (id)
  */
-app.get('/photosOfUser/:id', ensureAuthenticated, function (request, response, next) {
-    // XXX NEEDS REFACTOR
-    // id extracted from routing parameters
-    var id = request.params.id,
+app.get('/photosOfUser/:id', ensureAuthenticated, photos.getPhotos);
 
-        fetchPhotos = function(id) {
-            return Photo.findPhotosByUserId(id);
-        },
-        fetchUser = function(id) {
-            return User.findUserById(id, '_id first_name last_name');
-        },
-        print = function(val) {
-            console.log(val);
-            return val;
-        },
-        respond = sendResponse.bind(null, response),
-        // Array.map method wrapper converts elements to promises that need to be resolved before returning a result
-        mapPhotos = function(photos) {
-            var modify = modifyComments.bind(null, next);
-            return map(modify, photos);
-        };
+app.get('/comments/:id', ensureAuthenticated, comments.getComments);
 
-    fetchPhotos(id)
-        .then(print)
-        .then(copyDoc)
-        .then(mapPhotos)
-        .then(respond)
-        .catch(next);
-});
+app.post('/admin/login', passport.authenticate('login'), admin.login);
 
-app.get('/comments/:id', ensureAuthenticated, function(request, response, next) {
-    Photo.getCommentsByUserId(request.params.id)
-        .then(sendResponse.bind(null, response))
-        .catch(next);
-});
+app.post('/admin/logout', admin.logout);
 
-app.post('/admin/login', passport.authenticate('login', {session: true}), function(request, response, next) {
-    response.status(200).send(request.user);
-});
+app.post('/admin/register', passport.authenticate('register'), admin.register);
 
-app.post('/admin/logout', function(request, response, next) {
-    Promise.resolve(request.logOut())
-        .then(function() {
-            request.session.destroy();
-        }).then(sendResponse.bind(null, response))
-        .catch(next);
-});
+app.post('/commentsOfPhoto/:photoId', ensureAuthenticated, comments.addComment);
 
-app.post('/admin/register', function(request, response, next) {
-    // XXX May need to change
-    passport.authenticate('register', function(err, user, info) {
-        if (err) return next(err);
-        sendResponse(response, user);
-    })(request, response, next);
-});
-
-app.post('/commentsOfPhoto/:photoId', ensureAuthenticated, function(request, response, next) {
-    var id = request.params.photoId,
-        comment = {
-            comment: request.body.comment,
-            date_time: new Date(),
-            user_id: request.session.user._id
-        },
-        respond = sendResponse.bind(null, response);
-
-    Photo.findByIdAndUpdate(id, {$push: {'comments': comment}}, {new: true}).exec()
-        .then(copyDoc)
-        .then(modifyComments.bind(null, next))
-        .then(respond)
-        .catch(next)
-});
-
-app.post('/photos/new', ensureAuthenticated, function(request, response, next) {
-    processFormBody(request, response, function(err) {
-        console.log(request.session);
-        if (!request.file) {
-            var err = new Error('No file sent with request');
-            err.status = 400;
-        }
-        if (err) throw err;
-        var respond = sendResponse.bind(null, response);
-        // request.file has the following properties of interest
-        //      fieldname:      - Should be 'uploadedphoto' since that is what we sent
-        //      originalname:   - The name of the file the user uploaded
-        //      mimetype:       - The mimetype of the image (e.g. 'image/jpeg', or 'image/png'
-        //      buffer:         - A node Buffer containing the contents of the file
-        //      size:           - The size of the file in bytes
-
-        // XXX - Do some validation here
-        // We need to create the file in the directory "images" under a unique name. We make
-        // the original file name unique by adding a unique prefix with a timestamp
-        var timestamp = new Date().valueOf();
-        var filename = 'U' + String(timestamp) + request.file.originalname;
-        var thumbnail = 'thumbnail.' + filename;
-        var createPhoto = function() {
-            var photo = new Photo({file_name: filename, thumbnail: thumbnail,  date_time: new Date(), user_id: request.session.user._id});
-            console.log(photo);
-            photo.save();
-        };
-        var writeFiles = function(path, filename, thumbnail, buffer) {
-            return new Promise(function(resolve, reject) {
-                fs.writeFile(path + filename, buffer, function(err) {
-                    if (err) reject(err);
-                    resize({srcPath: path + filename, dstPath: path + thumbnail, width: 200}, function(err, stdout, stderr) {
-                        if (err) reject(err);
-                    });
-                    resolve(filename);
-                });
-            });
-        };
-
-        writeFiles("./images/", filename, thumbnail, request.file.buffer)
-            .then(createPhoto)
-            .then(respond)
-            .catch(next);
-    });
-});
+app.post('/photos/new', ensureAuthenticated, photos.addPhoto);
 
 var server = app.listen(3000, function () {
     var port = server.address().port;
     console.log('Listening at http://localhost:' + port + ' exporting the directory ' + __dirname);
 });
-    
-
-
-var userQueryIsValid = function(result) {
-    if (result === null) {
-        var err = new Error('User does not exist');
-        err.status = 400;
-        throw err;
-    } else return result;
-}
-
-var isAuthorized = function(request, id) {
-    if (typeof request.session.user === 'undefined' || request.session.user === null) {
-        var err = new Error('Unauthorized');
-        err.status = 401;
-        throw err;
-    } else return id;
-}
-
-var userIdIsValid = function(id) {
-    if (id === null) return null;
-    if (mongoose.Types.ObjectId.isValid(id) === false) {
-        var err = new Error('Invalid user id');
-        err.status = 400;
-        throw err;
-    }
-    return id;
-}
-
-var sendResponse = function(response, data) {
-    response.status(200).send(data);
-}
-// Function that creates a modifiable copy of a document fetched from mongodb
-var copyDoc = function(doc) {
-    return JSON.parse(JSON.stringify(doc));
-}
-
-var map = function(mapFn, collection) {
-    return Promise.all(collection.map(mapFn));
-}
-
-var modifyComments = function(next, photo) {
-    var build = buildComment.bind(null, next);
-    return map(build, photo.comments)
-        .then(function(result) {
-            photo.comments = result;
-            return photo;
-        });
-};
-
-// Helper function that adds user data to the comment it is called on
-
-var buildComment = function(next, comment) {
-    var id = comment.user_id;
-    return User.findUserById(id, '_id first_name last_name')
-        .then(userQueryIsValid)
-        .then(copyDoc)
-        .then(function(user) {
-            delete comment.user_id;
-            comment.user = user;
-            return comment;
-        })
-        .catch(next);
-};

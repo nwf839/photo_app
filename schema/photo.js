@@ -35,6 +35,19 @@ photoSchema.statics.findPhotosByUserId = function(id) {
     return this.find({user_id: id}).exec();
 };
 
+// Returns photo matching specified id and pushes adds comment
+// object
+photoSchema.statics.addComment = function(photoId, userId, comment) {
+    return this.findbyIdAndUpdate(photoId, 
+        {$push: {
+            'comments': {
+                comment: comment,
+                user_id: userId
+            }
+        }},
+    {new: true}).exec();
+};
+
 // Returns all userIds from comments
 // XXX DOES NOT WORK CORRECTLY
 // WILL NEED TO BE CHANGED OR SPLIT INTO TWO FUNCTIONS
