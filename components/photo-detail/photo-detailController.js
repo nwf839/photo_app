@@ -45,6 +45,4 @@ cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentSer
     $scope.prev = function() {
         if ($scope.main.curIndex > 0) $scope.select($scope.main.curIndex - 1);
     };
-
-    $scope.curTime = 
 }]);
