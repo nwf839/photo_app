@@ -1,9 +1,14 @@
 'use strict';
 
-module.exports = function(app, passport, ensureAuthenticated) {
-    require('./admin.js')(app, passport);
-    require('./users.js')(app, ensureAuthenticated);
-    require('./photos.js')(app, ensureAuthenticated);
-    require('./comments.js')(app, ensureAuthenticated);
-    require('./test.js')(app);
-};
+var express = require('express'),
+    router = express.Router();
+
+module.exports = (function(ensureAuthenticated) {
+    router.use(require('./admin.js'));
+    router.use(require('./userList.js'));
+    router.use(require('./users.js'));
+    router.use(require('./photos.js'));
+    router.use(require('./comments.js'));
+    router.use(require('./test.js'));
+    return router;
+})();

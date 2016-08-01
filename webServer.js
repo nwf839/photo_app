@@ -47,12 +47,6 @@ var passport = require('passport');
 var multer = require('multer');
 var processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto');
 var app = express();
-var ensureAuthenticated = function(request, response, next) {
-    if (request.isAuthenticated()) return next();
-    var err = new Error('Authentication Failed');
-    err.status = 401;
-    return next(err);
-};
 
 require('mongoose').Promise = Promise;
 require('./config/passport.js')(passport);
@@ -72,17 +66,13 @@ mongoose.connect('mongodb://localhost/cs142project6');
     }));
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(function(err, request, response, next) {
-        response.status(err.status || 500).send(err);
-        next();
-    });
+    app.use(require('./middleware/errorHandler.js'))
 
 app.get('/', function (request, response) {
     response.send('Simple web server of files from ' + __dirname);
 });
 
-
-require('./routes/index.js')(app, passport, ensureAuthenticated);
+app.use(require('./routes/index.js'));
 
 var server = app.listen(3000, function () {
     var port = server.address().port;

@@ -1,8 +1,12 @@
 'use strict';
 
-var users = require('../controllers/users.js');
+var users = require('../controllers/users.js'),
+    express = require('express'),
+    ensureAuthenticated = require('../middleware/ensureAuthenticated.js'),
+    router = express.Router();
 
-module.exports = function(app, ensureAuthenticated) {
-    app.get('/user/list', users.getUsers);
-    app.get('/user/:id', ensureAuthenticated, users.getUser);
-};
+module.exports = (function() {
+    router.use(ensureAuthenticated);
+    router.get('/user/:id', users.getUser);
+    return router;
+})();

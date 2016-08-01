@@ -1,10 +1,10 @@
 'use strict';
 
-var test = require('../controllers/test.js'),
+var userList = require('../controllers/userList.js'),
     express = require('express'),
     router = express.Router();
 
 module.exports = (function() {
-    router.get('/test/:p1', test.test);
+    router.get('/user/list', userList.getList);
     return router;
 })();

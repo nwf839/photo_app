@@ -1,8 +1,12 @@
 'use strict';
 
-var comments = require('../controllers/comments.js');
+var comments = require('../controllers/comments.js'),
+    express = require('express'),
+    ensureAuthenticated = require('../middleware/ensureAuthenticated.js'),
+    router = express.Router();
 
-module.exports = function(app, ensureAuthenticated) {
-    app.get('/comments/:id', ensureAuthenticated, comments.getComments);
-    app.post('/commentsOfPhoto/:photoId', ensureAuthenticated, comments.addComment);
-}
+module.exports = (function() {
+    router.get('/comments/:id', ensureAuthenticated, comments.getComments);
+    router.post('/commentsOfPhoto/:photoId', ensureAuthenticated, comments.addComment);
+    return router;
+})();
