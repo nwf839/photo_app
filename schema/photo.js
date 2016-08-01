@@ -51,8 +51,7 @@ photoSchema.statics.getPhotoCounts = function() {
             { $group: {
                 _id: '$user_id',
                 nPhotos: { $sum: 1 },
-            }},
-            { $sort: { _id: 1 }},
+            }}
         ]);
 };
 
@@ -63,8 +62,7 @@ photoSchema.statics.getCommentCounts = function() {
             { $group: {
                 _id: '$comments.user_id',
                 nComments: { $sum: 1 }
-            }},
-            { $sort: { _id: 1 }},
+            }}
         ]);
 }
 
@@ -80,8 +78,15 @@ photoSchema.statics.getCommentsByUserId = function(id) {
             }},
             { $match: { user_id: mongoose.Types.ObjectId(id)}}
         ]);
-}
+};
 
+photoSchema.statics.deleteComment = function(id) {
+    return this.aggregate(
+        [
+            { $unwind: '$comments' },
+            { $match: { _id: mongoose.Types.ObjectId(id)}}
+        ]).remove().exec();
+};
 // the schema is useless so far
 // we need to create a model using it
 var Photo = mongoose.model('Photo', photoSchema);

@@ -12,6 +12,18 @@ module.exports.getUser = function (request, response, next) {
         .catch(next);
 };
 
+module.exports.updateUser = function(request, response, next) { 
+    User.updateUser(request.params.id, request.body.user)
+        .then(respondOnSuccess.bind(null, response))
+        .catch(next);
+};
+
+module.exports.deleteUser = function(request, response, next) {
+    User.deleteUser(request.params.id)
+        .then(respondOnSuccess.bind(null, response))
+        .catch(next);
+};
+
 var userQueryIsValid = function(result) {
     if (result === null) {
         var err = new Error('User does not exist');

@@ -60,3 +60,20 @@ module.exports.addPhoto = function(request, response, next) {
                 .catch(next);
     });
 };
+
+module.exports.deletePhoto = function(request, response, next) {
+    Photo.findById(request.params.id).exec()
+        .then(function(result) {
+            module.exports.deletePhotoFile(result.file_name)
+            return result;
+        }).then(function(result) {
+            result.remove();
+        }).catch(next);
+};
+
+module.exports.deletePhotoFile = function(filename) {
+    fs.unlinkAsync(photosDir + filename)
+        .then(function() {
+            fs.unlinkAsync(photosDir + 'thumbnail.' + filename);
+        });
+}

@@ -21,7 +21,6 @@ module.exports.getComments = function(request, response, next) {
 };
 
 module.exports.addComment = function(request, response, next) {
-    console.log(request.params.photoId, request.user._id, request.body.comment);
     Photo.addComment(request.params.photoId, request.user._id, request.body.comment)
         .then(function(result) {
             console.log(result);
@@ -30,7 +29,13 @@ module.exports.addComment = function(request, response, next) {
         .then(copyMongoDoc)
         .then(module.exports.modifyComments.bind(null, next))
         .then(respondOnSuccess.bind(null, response))
-        .catch(next)
+        .catch(next);
+};
+
+module.exports.deleteComment = function(request, response, next) {
+    Photo.deleteComment(request.params.id)
+        .then(respondOnSuccess.bind(null, response))
+        .catch(next);
 };
 
 // XXX: DOES NOT WORK, AT LEAST ON FRONT END

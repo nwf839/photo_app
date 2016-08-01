@@ -6,7 +6,8 @@ var photos = require('../controllers/photos.js'),
     router = express.Router();
 
 module.exports = (function() {
-    router.get('/photosOfUser/:id', ensureAuthenticated, photos.getPhotos);
-    router.post('/photos/new', ensureAuthenticated, photos.addPhoto);
+    router.get('/photosOfUser/:id', photos.getPhotos);
+    router.post('/photos/new', photos.addPhoto);
+    router.delete('/photo/:id', photos.deletePhoto);
     return router;
 })();

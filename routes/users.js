@@ -8,5 +8,6 @@ var users = require('../controllers/users.js'),
 module.exports = (function() {
     router.use(ensureAuthenticated);
     router.get('/user/:id', users.getUser);
+    router.put('/user/:id', users.updateUser);
     return router;
 })();

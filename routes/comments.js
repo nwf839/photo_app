@@ -6,7 +6,9 @@ var comments = require('../controllers/comments.js'),
     router = express.Router();
 
 module.exports = (function() {
-    router.get('/comments/:id', ensureAuthenticated, comments.getComments);
-    router.post('/commentsOfPhoto/:photoId', ensureAuthenticated, comments.addComment);
+    router.use(ensureAuthenticated);
+    router.get('/comments/:id', comments.getComments);
+    router.put('/commentsOfPhoto/:photoId', comments.addComment);
+    router.delete('comment/:id', comments.deleteComment);
     return router;
 })();
