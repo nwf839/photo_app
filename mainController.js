@@ -154,6 +154,9 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
             }
         })
 }]);
+cs142App.run(function(Session) {
+    Session.getStatus();
+});
 
 cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session', 
     function ($rootScope, $scope, $state, $timeout, $http, Session) {
@@ -201,10 +204,12 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
         $rootScope.$on('sessionChanged', function() {
             $scope.main.loggedInUser = Session.getUserFirstName();
             $scope.main.loggedIn = Session.isLoggedIn();
+            $scope.main.loggedInId = Session.getUserFirstName();
+            console.log($scope.main.loggedIn);
         });
 
         $rootScope.$on('$stateChangeStart', function(event, toState) {
-            if ($scope.main.loggedIn === false) {
+            if (Session.isLoggedIn === false) {
                 if (toState.name !== 'login-register.login' && toState.name !== 'login-register.register') {
                     $timeout(function() {
                         $state.go('login-register.login');

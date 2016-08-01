@@ -7,7 +7,8 @@ var User = require('../schema/user.js');
 
 module.exports = function(passport) {
     passport.serializeUser(function(user, done) {
-        Promise.resolve(user._id).asCallback(done); 
+        Promise.resolve(user._id)
+            .asCallback(done); 
     });
 
     passport.deserializeUser(function(id, done) {

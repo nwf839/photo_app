@@ -64,7 +64,7 @@ mongoose.connect('mongodb://localhost/cs142project6');
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(session({
-        //cookie: {maxAge: 3600000},
+        cookie: {maxAge: 3600000},
         secret: 'aIntNoBOdygonGeTDis', 
         store: new redisStore({host: 'localhost', port: 6379, client: client, ttl: 260}),
         resave: false,

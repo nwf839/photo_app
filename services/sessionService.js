@@ -1,11 +1,13 @@
 services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'UserDetailService', 'UserPhotosService',
         function($rootScope, $resource, $state, $timeout, UserDetailService, UserPhotosService) {
             var user = {},
-                loginResource = $resource('/admin/login', {}),
-                logoutResource = $resource('/admin/logout', {}, {withCredentials: true}),
+                loginResource = $resource('/admin/login'),
+                logoutResource = $resource('/admin/logout'),
                 registerResource = $resource('/admin/register'),
+                statusResource = $resource('/admin/status'),
                 loggedIn = false,
                 setUser = function(response) {
+                    console.log(response);
                     user = response.toJSON();
                     loggedIn = (Object.keys(user).length !== 0);
                     if (loggedIn === false) $timeout($state.go('login-register.login'));
@@ -44,6 +46,10 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                 },
                 isLoggedIn: function() {
                     return loggedIn;
+                },
+                getStatus: function() {
+                    statusResource.save({}).$promise
+                        .then(setUser);
                 }
             }
         }]);
