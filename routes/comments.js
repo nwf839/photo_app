@@ -8,7 +8,7 @@ var comments = require('../controllers/comments.js'),
 module.exports = (function() {
     router.use(ensureAuthenticated);
     router.get('/comments/:id', comments.getComments);
-    router.put('/commentsOfPhoto/:photoId', comments.addComment);
+    router.post('/commentsOfPhoto/:photoId', comments.addComment);
     router.delete('comment/:id', comments.deleteComment);
     return router;
 })();

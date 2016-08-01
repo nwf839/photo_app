@@ -95,7 +95,7 @@ Promise.all(removePromises).then(function () {
                             photoObj.comments.push({
                                 comment: comment.comment,
                                 date_time: comment.date_time,
-                                user_id: comment.user.objectID
+                                user: comment.user.objectID
                             });
                             console.log("Adding comment of length %d by user %s to photo %s",
                                 comment.comment.length,

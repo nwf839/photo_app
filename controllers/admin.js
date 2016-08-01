@@ -43,6 +43,5 @@ module.exports.deleteAccount = function(request, response, next) {
 
 module.exports.getStatus = function(request, response, next) {
     var data = (request.user || {});
-    console.log(data);
     respondOnSuccess(response, data);
 };

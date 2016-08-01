@@ -22,7 +22,7 @@ var commentSchema = new mongoose.Schema({
         default: Date.now,
         require: [true, 'Date not set']
     }, // The date and time when the comment was created.
-    user_id: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         require: [true, 'User id not provided']
@@ -59,19 +59,17 @@ var photoSchema = new mongoose.Schema({
 
 // Returns all photos matching the specified userId
 photoSchema.statics.findPhotosByUserId = function(id) {
-    return this.find({user_id: id}).exec();
+    return this.find({user_id: id}).populate('comments.user', '_id first_name last_name').exec();
 };
 
 // Returns photo matching specified id and pushes adds comment
 // object
 photoSchema.statics.addComment = function(photoId, userId, comment) {
-    return this.findByIdAndUpdate(photoId, {$push: {"comments": {comment: comment, user_id: userId}}}, {new: true}).exec()
+    return this.findByIdAndUpdate(photoId, {$push: {'comments': {comment: comment, user: userId}}}, {new: true})
+        .populate('comments.user', 'id first_name last_name').exec()
 };
 
 // Returns all userIds from comments
-// XXX DOES NOT WORK CORRECTLY
-// WILL NEED TO BE CHANGED OR SPLIT INTO TWO FUNCTIONS
-// XXX
 photoSchema.statics.getPhotoCounts = function() {
     return this.aggregate(
         [
@@ -87,7 +85,7 @@ photoSchema.statics.getCommentCounts = function() {
         [
             { $unwind: '$comments' },
             { $group: {
-                _id: '$comments.user_id',
+                _id: '$comments.user',
                 nComments: { $sum: 1 }
             }}
         ]);
@@ -101,9 +99,9 @@ photoSchema.statics.getCommentsByUserId = function(id) {
                     _id: '$comments._id',
                     comment: '$comments.comment',
                     date_time: '$comments.date_time',
-                    user_id: '$comments.user_id',
+                    user: '$comments.user',
             }},
-            { $match: { user_id: mongoose.Types.ObjectId(id)}}
+            { $match: { user: mongoose.Types.ObjectId(id)}}
         ]);
 };
 

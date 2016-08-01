@@ -1,8 +1,6 @@
 var Promise = require('bluebird'),
     mongoose = require('mongoose'),
     Photo = require('../schema/photo.js'),
-    comments = require('./comments.js'),
-    copyMongoDoc = require('../helpers/copyMongoDoc.js'),
     respondOnSuccess = require('../helpers/respondOnSuccess.js'),
     resize = require('easyimage').resize,
     fs = Promise.promisifyAll(require('fs')),
@@ -15,10 +13,7 @@ var Promise = require('bluebird'),
 
 module.exports.getPhotos = function(request, response, next) {
     Photo.findPhotosByUserId(request.params.id)
-        .then(copyMongoDoc)
-        .then(function(photos) {
-            return Promise.map(photos, comments.modifyComments.bind(null, next));
-        }).then(respondOnSuccess.bind(null, response))
+        .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };
 
