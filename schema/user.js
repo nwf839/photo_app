@@ -20,7 +20,7 @@ var userSchema = new mongoose.Schema({
         type: String,    // Password digest salted user's salted password
         require: [true, 'No password provided'],
         min: 12
-    }
+    },
     first_name: {
         type: String, // First name of the user.
         required: [true, 'No first name provided']
@@ -28,7 +28,7 @@ var userSchema = new mongoose.Schema({
     last_name: {
         type: String,  // Last name of the user.
         required: [true, 'No last name provided']
-    }
+    },
     location: String,    // Location  of the user.
     description: String,  // A brief user description
     occupation: String,    // Occupation of the user.
