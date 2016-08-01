@@ -18,6 +18,7 @@
                 <p ng-bind="photoDetail.commentModel.comment"></p>
                 <p class="md-caption" pa-current-time></p>
             </div>
+            <md-button ng-click="photoDetail.addComment()">Post</md-button>
         </md-list-item>
         <md-list-item class="md-3-line md-no-style flex md-long-text md-ink-ripple">
             <md-input-container flex>
@@ -28,7 +29,6 @@
                     mentio-items="photoDetail.userList | filter:label:typedTerm"
                     ng-model="photoDetail.commentModel.comment"
                     rows="3"></textarea>
-                <md-button ng-click="photoDetail.addComment()">Add Comment</md-button>
             </md-input-container>
         </md-list-item>
         </md-list>
@@ -41,12 +41,3 @@
         <md-button ng-click="next()">&gt;</md-button>
     </div>
 </md-toolbar>
-<!--
-<script type="text/ng-template" id="/people-mentions.tpl">
-    <md-list>
-        <md-list-item mentio-menu-item="user" ng-repeat="user in items">
-            <span ng-bind-html="user.label | mentioHighlight:typedTerm:'menu-highlighted' | unsafe"></span>
-        </md-list-item>
-    </md-list>
-</script>
--->
