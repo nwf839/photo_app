@@ -16,6 +16,7 @@ services.factory('UserDetailService', ['$resource', function($resource) {
 
         return {
             getUser: function(id) {
+                console.log(id);
                 //if (userId === id) return Promise.resolve(user);
                 //else {
                     return resource.get({id: id}).$promise

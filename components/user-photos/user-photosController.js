@@ -1,26 +1,16 @@
 'use strict';
 
-cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams', 'photoData', 'AddCommentService', 'UserPhotosService',
-    function($scope, $state, $stateParams, photoData, AddCommentService, UserPhotosService) {
-        var userId = $stateParams.userId,
-                replacePhoto = function(index, photo) {
-                    $scope.userPhotos.photos[index] = photo;
-                    $scope.userPhotos.comments[index].comment = '';
-                    return userId;
-            };
-        
+cs142App.controller('UserPhotosController', ['$scope', '$state', 'photoData',
+    function($scope, $state, photoData) {        
         $scope.userPhotos = photoData;
-
-        $scope.userPhotos.addComment = function(photoId, pIndex) {
-            return AddCommentService.addComment(photoId, $scope.userPhotos.comments[pIndex])
-                .then(replacePhoto.bind(null, pIndex))
-                .then(UserPhotosService.getPhotos);
-        };
+        $scope.main.selectedUser = photoData.selectedUser;
 
         $scope.$watch('userPhotos.photos', function(newValue, oldValue) {
             if (newValue !== oldValue) $scope.userPhotos.photos = newValue;
         });
 
+        
+        
         $scope.curIndex = 0;
 
         $scope.select = function(index) {
@@ -35,4 +25,5 @@ cs142App.controller('UserPhotosController', ['$scope', '$state', '$stateParams',
         $scope.prev = function() {
             if ($scope.curIndex > 0) $scope.select($scope.curIndex - 1);
         };
-}]);
+    }
+]);

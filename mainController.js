@@ -3,190 +3,200 @@
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
 var cs142App = angular.module('cs142App', ['mentio', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
-cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', '$mdIconProvider',
-    function($stateProvider, $locationProvider, $urlRouterProvider, $mdIconProvider) {
-    $urlRouterProvider.otherwise('/login-register/login');
-    $stateProvider
-       
-
-        .state('root', {
-            abstract: true,
-            resolve: {
-                userListService: 'UserListService',
-                list: function(userListService) {
-                    return userListService.getUserList();
-                },
-                updateList: function(userListService) {
-                    return userListService.getUserList;
-                }
-            },
-            views: {
-                '@' : {
-                    templateUrl: 'photo-share-layout.html',
-                    controller: 'MainController'
-                },
-                'top@root': { templateUrl: 'photo-share-top-nav.html' },
-                'side@root': { 
-                    templateUrl: 'components/user-list/user-listTemplate.html',
-                    controller: 'UserListController'
-                },
-                'main@root': { templateUrl: 'photo-share-display-window.html' }
-            }
-        })
+cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
+    function($stateProvider, $urlRouterProvider, $mdIconProvider) {
         
-
-        .state('users', {
-            parent: 'root',
-            url: '/users',
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-list/user-listTemplate.html',
-                    controller: 'UserListController'
-                }
-            }
-        })
-        .state('users.detail', {
-            url: '/:userId',
-            resolve: {
-                userDetailService: 'UserDetailService',
-                user: function($stateParams, userDetailService) {
-                    return userDetailService.getUser($stateParams.userId);
-                }
-            },
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-detail/user-detailTemplate.html',
-                    controller: 'UserDetailController'
-                }
-            }
-        })
-
-        .state('profile', {
-            parent: 'root',
-            url: '/profile/:userId',
-            resolve: {
-                userDetailService: 'UserDetailService',
-                userData: function($stateParams, userDetailService) {
-                    return userDetailService.getUser($stateParams.userId)
-                        .then(function(result) {
-                            var data = {
-                                user: result,
-                                isDisabled: {}
-                            };
-                            angular.forEach(Object.keys(result), function(key) {
-                                data.isDisabled[key] = true;
-                            });
-                            return data;
-                        });
+        $urlRouterProvider.otherwise('/login-register/login');
+        
+        $stateProvider
+            .state('root', {
+                abstract: true,
+                resolve: {
+                    userListService: 'UserListService',
+                    list: function(userListService) {
+                        return userListService.getUserList();
+                    },
+                    updateList: function(userListService) {
+                        return userListService.getUserList;
+                    }
                 },
-                updateUser: function($stateParams, userDetailService) {
-                        return userDetailService.updateUser.bind(null, $stateParams.userId);
+                views: {
+                    '@' : {
+                        templateUrl: 'photo-share-layout.html',
+                        controller: 'MainController'
+                    },
+                    'top@root': { templateUrl: 'photo-share-top-nav.html' },
+                    'side@root': { 
+                        templateUrl: 'components/user-list/user-listTemplate.html',
+                        controller: 'UserListController'
+                    },
+                    'main@root': { templateUrl: 'photo-share-display-window.html' }
                 }
-            },
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-profile/user-profileTemplate.html',
-                    controller: 'UserProfileController'
-                }
-            }
-        })
+            })
+            
 
-        .state('login-register', {
-            parent: 'root',
-            abstract: 'true',
-            url: '/login-register',
-            views: {
-                'display@root': {
-                    templateUrl: 'components/login-register/login-registerTemplate.html',
-                    controller: 'LoginRegisterController'
+            .state('users', {
+                parent: 'root',
+                url: '/users',
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/user-list/user-listTemplate.html',
+                        controller: 'UserListController'
+                    }
                 }
-            }
-        })
-        .state('login-register.login', {
-            url: '/login',
-            templateUrl: 'components/login-register/loginTemplate.html'
-        })
-        .state('login-register.register', {
-            url: '/register',
-            templateUrl: 'components/login-register/registerTemplate.html'
-        })
-
-
-        .state('photos', {
-            parent: 'root',
-            abstract: 'true',
-            url: '/photos',
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-photos/user-photosTemplate.html',
-                }
-            }
-        })
-        .state('photos.display', {
-            url: '/:userId',
-            templateUrl: 'components/user-photos/user-photosDisplayTemplate.html',
-            controller: 'UserPhotosController',
-            resolve: {
-                userPhotosService: 'UserPhotosService',
-                photoData: function(userPhotosService, $stateParams) {
-                    return userPhotosService.getPhotos($stateParams.userId)
-                        .then(function(result) {
-                            var data = {
-                                photos: [],
-                                comments: [],
-                                ids: []
-                            }
-                            angular.forEach(result, function(photo) {
-                                data.photos.push(photo);
-                                data.comments.push({comment: ''});
-                                data.ids.push(photo._id);
-                            });
-                            return data;
-                        });
+            })
+            .state('users.detail', {
+                url: '/:userId',
+                resolve: {
+                    userDetailService: 'UserDetailService',
+                    user: function($stateParams, userDetailService) {
+                        return userDetailService.getUser($stateParams.userId);
+                    }
                 },
-            }
-        })
-        .state('photos.display.detail', {
-            url: '/:photoId',
-            resolve: {
-                photoDetail: function($stateParams, photoData) {
-                    var data = {};
-                    data.photoIndex = photoData.ids.indexOf($stateParams.photoId);
-                    data.photo = photoData.photos[data.photoIndex];
-                    data.commentModel = {comment: ''};
-                    data.ids = photoData.ids;
-                    return data;
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/user-detail/user-detailTemplate.html',
+                        controller: 'UserDetailController'
+                    }
                 }
-            },
-            views: {
-                'display@root': {
-                    templateUrl: 'components/photo-detail/photo-detailTemplate.html',
-                    controller: 'PhotoDetailController'
+            })
+
+            .state('profile', {
+                parent: 'root',
+                url: '/profile/:userId',
+                resolve: {
+                    userDetailService: 'UserDetailService',
+                    userData: function($stateParams, userDetailService) {
+                        return userDetailService.getUser($stateParams.userId)
+                            .then(function(result) {
+                                var data = {
+                                    user: result,
+                                    isDisabled: {}
+                                };
+                                angular.forEach(Object.keys(result), function(key) {
+                                    data.isDisabled[key] = true;
+                                });
+                                return data;
+                            });
+                    },
+                    updateUser: function($stateParams, userDetailService) {
+                            return userDetailService.updateUser.bind(null, $stateParams.userId);
+                    }
+                },
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/user-profile/user-profileTemplate.html',
+                        controller: 'UserProfileController'
+                    }
                 }
-            }
-        })
+            })
+
+            .state('login-register', {
+                parent: 'root',
+                abstract: 'true',
+                url: '/login-register',
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/login-register/login-registerTemplate.html',
+                        controller: 'LoginRegisterController'
+                    }
+                }
+            })
+            .state('login-register.login', {
+                url: '/login',
+                templateUrl: 'components/login-register/loginTemplate.html'
+            })
+            .state('login-register.register', {
+                url: '/register',
+                templateUrl: 'components/login-register/registerTemplate.html'
+            })
 
 
-        .state('comments', {
-            parent: 'root',
-            url: '/comments/:userId',
-            resolve: {
-                userCommentsService: 'UserCommentsService',
-                comments: function($stateParams, userCommentsService) {
-                    return userCommentsService.getComments($stateParams.userId);
+            .state('photos', {
+                parent: 'root',
+                abstract: 'true',
+                url: '/photos',
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/user-photos/user-photosTemplate.html',
+                    }
                 }
-            },
-            views: {
-                'display@root': {
-                    templateUrl: 'components/user-comments/user-commentsTemplate.html',
-                    controller: 'UserCommentsController'
+            })
+            .state('photos.display', {
+                url: '/:userId',
+                templateUrl: 'components/user-photos/user-photosDisplayTemplate.html',
+                controller: 'UserPhotosController',
+                resolve: {
+                    userPhotosService: 'UserPhotosService',
+                    userDetailService: 'UserDetailService',
+                    photoData: function(userPhotosService, userDetailService, $stateParams) {
+                        return userPhotosService.getPhotos($stateParams.userId)
+                            .then(function(result) {
+                                var data = {
+                                    photos: [],
+                                    comments: [],
+                                    ids: [],
+                                }
+                                angular.forEach(result, function(photo) {
+                                    data.photos.push(photo);
+                                    data.comments.push({comment: ''});
+                                    data.ids.push(photo._id);
+                                });
+                                return data;
+                            }).then(function(data) {
+                                return userDetailService.getUser($stateParams.userId)
+                                    .then(function(result) {
+                                        data.selectedUser = 'Photos of ' + result.first_name + ' ' + result.last_name;
+                                        return data;
+                                    });
+                            });
+                    },
                 }
-            }
-        });
-    $mdIconProvider
-        .defaultFontSet('fa')
-        .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg');
-}]);
+            })
+            .state('photos.display.detail', {
+                url: '/:photoId',
+                resolve: {
+                    photoDetail: function($stateParams, photoData) {
+                        var data = {};
+                        data.photoIndex = photoData.ids.indexOf($stateParams.photoId);
+                        data.photo = photoData.photos[data.photoIndex];
+                        data.commentModel = {comment: ''};
+                        data.ids = photoData.ids;
+                        return data;
+                    }
+                },
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/photo-detail/photo-detailTemplate.html',
+                        controller: 'PhotoDetailController'
+                    }
+                }
+            })
+
+
+            .state('comments', {
+                parent: 'root',
+                url: '/comments/:userId',
+                resolve: {
+                    userCommentsService: 'UserCommentsService',
+                    comments: function($stateParams, userCommentsService) {
+                        return userCommentsService.getComments($stateParams.userId);
+                    }
+                },
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/user-comments/user-commentsTemplate.html',
+                        controller: 'UserCommentsController'
+                    }
+                }
+            });
+
+        $mdIconProvider
+            .defaultFontSet('fa')
+            .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg');
+    }
+]);
+
 cs142App.run(function(Session) {
     Session.getStatus();
 });

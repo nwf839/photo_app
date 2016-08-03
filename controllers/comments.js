@@ -21,7 +21,7 @@ module.exports.getComments = function(request, response, next) {
 };
 
 module.exports.addComment = function(request, response, next) {
-    Photo.addComment(request.params.photoId, request.user._id, request.body.comment)
+    Photo.addComment(request.body)
         .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };

@@ -14,7 +14,7 @@
         </md-list-item>
         <md-list-item class="md-3-line md-long-text md-no-style md-ink-ripple" ng-show="!commentIsEmpty">
             <div class="md-list-item-text">
-                <h3>{{photoDetail.user.first_name}} {{photoDetail.user.last_name}}</h3>
+                <h3>{{main.loggedInUser}}</h3>
                 <p ng-bind="photoDetail.commentModel.comment"></p>
                 <p class="md-caption" pa-current-time></p>
             </div>

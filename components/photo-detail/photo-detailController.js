@@ -9,7 +9,11 @@ cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentSer
 
     $scope.photoDetail = photoDetail;
     $scope.photoDetail.addComment = function() {
-        return AddCommentService.addComment($scope.photoDetail.photo._id, $scope.photoDetail.commentModel)
+        $scope.photoDetail.photo.comments.push({
+            comment: $scope.photoDetail.commentModel.comment,
+            user: $scope.main.loggedInId
+        });
+        return AddCommentService.addComment($scope.photoDetail.photo)
             .then(replacePhoto);
     };
 
