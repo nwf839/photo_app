@@ -12,6 +12,10 @@ var Promise = require('bluebird'),
 
 module.exports.getComments = function(request, response, next) {
     Photo.getCommentsByUserId(request.params.id)
+        .then(function(result) {
+            console.log(result);
+            return result;
+        })
         .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };

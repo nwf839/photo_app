@@ -1,17 +1,42 @@
-<md-toolbar layout = "row" layout-align="space-between center">
-            <div ng-show="main.loggedIn">Hi, {{main.loggedInId}}!</div>
-            <div ng-hide="main.loggedIn">
-                <md-button ui-sref="login-register.login">Login</md-button>
-            </div>
-            <div ng-show="main.loggedIn" layout="row">
-                <input type="file" accept="image/*" name="file" onchange="angular.element(this).scope().inputFileNameChanged(this)">
-                <md-button ng-click="uploadPhoto()">Add Photo</md-button>
-            </div>
-            <div>{{main.selectedUser}}</div>
-            <div ng-show="main.loggedIn">
-                <md-button ng-click="main.logout()">Logout</md-button>
-            </div>
-            <div ng-hide="main.loggedIn">
-                <md-button ui-sref="login-register.register">Register</md-button>
-            </div>
-        </md-toolbar>
+<md-toolbar layout="row" layout-align="space-between center">
+    <md-menu>
+        <div ng-show="main.loggedIn">
+            <md-list-item>
+            <img ng-src="/assets/images/avatars/{{main.loggedInUsername}}.jpg" class="md-avatar"></img>
+            <h5>{{main.loggedInUser}}</h5>
+            <md-icon md-svg-icon="dropdown" aria-label="menu" ng-click="$mdOpenMenu($event)"></md-icon>
+            </md-list-item>
+        </div>
+        <md-menu-content>
+            <md-menu-item>
+                <md-button ui-sref="profile({userId: main.loggedInId})">My Profile</md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button ui-sref="photos.display({userId: main.loggedInId})">My Photos</md-button>
+            </md-menu-item>
+            <md-menu-item>
+                <md-button ui-sref="comments({userId: main.loggedInId})">My Comments</md-button>
+            </md-menu-item>
+        </md-menu-content>
+    </md-menu>
+    <div ng-hide="main.loggedIn">
+        <md-button ui-sref="login-register.login">Login</md-button>
+    </div>
+    <div ng-show="main.loggedIn" layout="row">
+        <div ng-hide="showUpload">
+            <input class="ng-hide" id="file-input" type="file" accept="image/*" name="file" onchange="angular.element(this).scope().inputFileNameChanged(this)"></input>
+            <label for="file-input" class="md-button md-primary">Choose Photo</label>
+        </div>
+        <div ng-show="showUpload">
+            <md-button ng-click="uploadPhoto()">Add Photo</md-button>
+            <md-button ng-click="clearPhotoFile()">Cancel</md-button>
+        </div>
+    </div>
+    <div>{{main.selectedUser}}</div>
+    <div ng-show="main.loggedIn">
+        <md-button ng-click="main.logout()">Logout</md-button>
+    </div>
+    <div ng-hide="main.loggedIn">
+        <md-button ui-sref="login-register.register">Register</md-button>
+    </div>
+</md-toolbar>

@@ -13,7 +13,7 @@ module.exports.getUser = function (request, response, next) {
 };
 
 module.exports.updateUser = function(request, response, next) { 
-    User.updateUser(request.params.id, request.body.user)
+    User.updateUser(request.params.id, request.body)
         .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };

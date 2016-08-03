@@ -19,6 +19,7 @@
  *
  */
 
+
 var Promise = require('bluebird');
 
 // Get the magic models we used in the previous projects.
@@ -37,6 +38,11 @@ var SchemaInfo = require('./schema/schemaInfo.js');
 
 var versionString = '1.0';
 
+//temp
+var path = require('path'),
+    photosDir = path.join(__dirname, '/assets/images/photos/'),
+    thumbDir = path.join(__dirname, '/assets/images/thumbnails/'),
+    easyimage = require('easyimage');
 // We start by removing anything that existing in the collections.
 var removePromises = [User.remove({}), Photo.remove({}), SchemaInfo.remove({})];
 
@@ -81,15 +87,13 @@ Promise.all(removePromises).then(function () {
         var photoPromises = photoModels.map(function (photo) {
             return Photo.create({
                 file_name: photo.file_name,
-                thumbnail: 'thumbnail.' + photo.file_name,
                 date_time: photo.date_time,
                 user_id: mapFakeId2RealId[photo.user_id]
             }, function (err, photoObj) {
                 if (err) {
                     console.error('Error create user', err);
                 } else {
-
-                    photo.objectID = photoObj._id;
+                    console.log(photoObj.file_name);
                     if (photo.comments) {
                         photo.comments.forEach(function (comment) {
                             photoObj.comments.push({
@@ -105,6 +109,16 @@ Promise.all(removePromises).then(function () {
                     }
                     photoObj.save();
                     console.log('Adding photo:', photo.file_name, ' of user ID ', photoObj.user_id);
+                    easyimage.thumbnail(
+                        {
+                            src: photosDir + photo.file_name,
+                            dst: thumbDir + photo.file_name,
+                            width: 240
+                        }).then(function(file) {
+                            console.log(file);
+                        }, function(err) {
+                            console.log(err);
+                        });
                 }
             });
         });

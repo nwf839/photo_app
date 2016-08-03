@@ -82,6 +82,7 @@ userSchema.statics.getPasswordHash = function(username) {
 
 // Updates user and returns modified doc
 userSchema.statics.updateUser = function(id, userData) {
+    console.log(userData);
     return this.findByIdAndUpdate(id, userData, {new: true}).exec();
 };
 

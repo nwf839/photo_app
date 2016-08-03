@@ -1,0 +1,76 @@
+<form name="profileForm">
+    <md-list>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text" layout="column">
+                <md-input-container>  
+                    <label>First Name</label>
+                    <input type="text" name="first_name" ng-model="userProfile.user.first_name" ng-disabled="userProfile.isDisabled.first_name" required/>
+                    <div ng-messages="profileForm.first_name.$error" role="alert">
+                        <div ng-message="required">This field is required</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <md-button ng-show="userProfile.isDisabled.first_name" ng-click="toggleAccessibility('first_name')">Edit</md-button>
+            <div ng-hide="userProfile.isDisabled.first_name">
+                <md-button ng-click="undoChanges('first_name')">Undo</md-button>
+                <md-button ng-click="updateUser('first_name')">Save</md-button>
+            </div>
+        </md-list-item>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text" layout="column">
+                <md-input-container>
+                    <label>Last Name</label>
+                    <input type="text" name="last_name"  ng-model="userProfile.user.last_name" ng-disabled="userProfile.isDisabled.last_name" required/>
+                    <div ng-messages="profileForm.last_name.$error" role="alert">
+                        <div ng-message="required">This field is required</div>
+                    </div>
+                </md-input-container>
+            </div>
+            <md-button ng-show="userProfile.isDisabled.last_name" ng-click="toggleAccessibility('last_name')">Edit</md-button>
+            <div ng-hide="userProfile.isDisabled.last_name">
+                <md-button ng-click="undoChanges('last_name')">Undo</md-button>
+                <md-button ng-click="updateUser('last_name')">Save</md-button>
+            </div>
+        </md-list-item>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text" layout="column">
+                <md-input-container>
+                    <label>Location</label>
+                    <input type="text" name="location" ng-model="userProfile.user.location" ng-disabled="userProfile.isDisabled.location"/>
+                </md-input-container>
+            </div>
+            <md-button ng-show="userProfile.isDisabled.location" ng-click="toggleAccessibility('location')">Edit</md-button>
+            <div ng-hide="userProfile.isDisabled.location">
+                <md-button ng-click="undoChanges('location')">Undo</md-button>
+                <md-button ng-click="updateUser('location')">Save</md-button>
+            </div>
+
+        </md-list-item>
+        <md-list-item class="md-2-line">
+            <div class="md-list-item-text" layout="column">
+                <md-input-container>
+                    <label>Occupation</label>
+                    <input type="text" name="occupation" ng-model="userProfile.user.occupation"ng-disabled="userProfile.isDisabled.occupation"/>
+                </md-input-container>
+            </div>
+            <md-button ng-show="userProfile.isDisabled.occupation" ng-click="toggleAccessibility('occupation')">Edit</md-button>
+            <div ng-hide="userProfile.isDisabled.occupation">
+                <md-button ng-click="undoChanges('occupation')">Undo</md-button>
+                <md-button ng-click="updateUser('occupation')">Save</md-button>
+            </div>
+        </md-list-item>
+        <md-list-item class="md-3-line">
+            <div class="md-list-item-text" layout="column">
+                <md-input-container>
+                    <label>Description</label>
+                    <textarea ng-model="userProfile.user.description" rows="3" ng-disabled="userProfile.isDisabled.description"></textarea>
+                </md-input-container>
+            </div>
+            <md-button ng-show="userProfile.isDisabled.description" ng-click="toggleAccessibility('description')">Edit</md-button>
+            <div ng-hide="userProfile.isDisabled.description">
+                <md-button ng-click="undoChanges('description')">Undo</md-button>
+                <md-button ng-click="updateUser('description')">Save</md-button>
+            </div>
+        </md-list-item>
+    </md-list>
+</form>

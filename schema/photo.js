@@ -36,10 +36,10 @@ var photoSchema = new mongoose.Schema({
         type: String,
         require: [true, 'Filename not provided']
     },// 	Name of a file containing the actual photo (in the directory project6/images).
-    thumbnail: {
+    /*thumbnail: {
         type: String, 
         require: [true, 'Thumbnail filename not provided']
-    },//   Name of the file containing a thumbnail of the photo (same directory as photos).
+    },//*/   //Name of the file containing a thumbnail of the photo (same directory as photos).
     date_time: {
         type: Date,
         default: Date.now,
@@ -94,14 +94,17 @@ photoSchema.statics.getCommentCounts = function() {
 photoSchema.statics.getCommentsByUserId = function(id) {
     return this.aggregate(
         [
-            { $unwind: '$comments' },
-            { $project: { 
-                    _id: '$comments._id',
-                    comment: '$comments.comment',
-                    date_time: '$comments.date_time',
-                    user: '$comments.user',
-            }},
-            { $match: { user: mongoose.Types.ObjectId(id)}}
+            {$match: {'comments.user': mongoose.Types.ObjectId(id)}},
+            {$project: { 
+                _id: '$_id',
+                file_name: '$file_name',
+                user: '$user_id',
+                comments: {$filter: {
+                    input: '$comments',
+                    as: 'comment',
+                    cond: {$eq: ['$$comment.user', mongoose.Types.ObjectId(id)]}
+                }}
+            }}
         ]);
 };
 

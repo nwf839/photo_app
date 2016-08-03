@@ -3,7 +3,11 @@
 services.factory('UserDetailService', ['$resource', function($resource) {
         var user = {},
             userId = null,
-            resource = $resource('/user/:id', {}, {withCredentials: true}),
+            resource = $resource('/user/:id', {}, {
+                get: {method: 'GET'},
+                create: {method: 'POST'},
+                update: {method: 'PUT'}
+            }),
             setUser = function(response) {
                 user = response.toJSON();
                 userId = user._id;
@@ -18,6 +22,10 @@ services.factory('UserDetailService', ['$resource', function($resource) {
                         .then(setUser);
                 //}
             },
+            updateUser: function(id, user) {
+                return resource.update({id: id}, user).$promise
+                    .then(setUser);
+            }
             //clearUser: function() {
             //    user = {};
             //    userId = null;

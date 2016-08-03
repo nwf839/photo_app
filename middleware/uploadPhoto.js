@@ -1,25 +1,13 @@
 var Promise = require('bluebird'),
-    mongoose = require('mongoose'),
-    Photo = require('../schema/photo.js'),
-    respondOnSuccess = require('../helpers/respondOnSuccess.js'),
-    resize = require('easyimage').resize,
     fs = Promise.promisifyAll(require('fs')),
+    resize = require('easyimage').resize,
     bodyparser = require('body-parser'),
     multer = require('multer'),
-    processFormBody = multer({storage: multer.memoryStorage()}).single('uploadedphoto'),
-    path = require('path'),
-    // TEMPORARY PLACEHOLDER FIX
-    photosDir = path.join(__dirname, '../assets/images/photos/'),
-    thumbsDir = path.join(__dirname, '../assets/images/thumbnails/');
-
-module.exports.getPhotos = function(request, response, next) {
-    Photo.findPhotosByUserId(request.params.id)
-        .then(respondOnSuccess.bind(null, response))
-        .catch(next);
-};
-
-module.exports.addPhoto = function(request, response, next) {
-    processFormBody(request, response, function(err) {
+    uploadPhoto = Promise.promisify(multer({storage: multer.memoryStorage()}).single('uploadedphoto')),
+    photosDir = path.join(__dirname, '../assets/images/';
+        
+       
+module.exports.uploadPhoto = processFormBody(request, response, function(err) {
         if (!request.file) {
             var err = new Error('No file sent with request');
             err.status = 400;
@@ -39,6 +27,7 @@ module.exports.addPhoto = function(request, response, next) {
         var photo = {
             timestamp: timestamp,
             filename: 'U' + String(timestamp) + request.file.originalname,
+            thumbnail: 'thumbnail.' + String(timestamp) + request.file.originalname,
             user_id: request.user._id
         }
         
@@ -46,27 +35,12 @@ module.exports.addPhoto = function(request, response, next) {
             .then(function() {
                 resize({
                     src: photosDir + photo.filename,
-                    dst: thumbsDir + photo.filename,
-                    width: 360
+                    dst: photosDir + photo.thumbnail,
+                    width: 200
                 });
             }).then(function() {
                 return Photo.create(photo);
             }).then(respondOnSuccess.bind(null, response))
                 .catch(next);
     });
-};
 
-module.exports.deletePhoto = function(request, response, next) {
-    Photo.findById(request.params.id).exec()
-        .then(function(result) {
-            module.exports.deletePhotoFile(result.file_name)
-            return result;
-        }).then(function(result) {
-            result.remove();
-        }).catch(next);
-};
-
-module.exports.deletePhotoFile = function(filename) {
-    fs.unlinkAsync(photosDir + filename)
-        .then(fs.unlinkAsync.bind(thumbsDir + filename));
-}

@@ -28,8 +28,6 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                     if (loggedIn === true) {
                         logoutResource.save({}).$promise
                             .then(setUser)
-                            .then(UserDetailService.clearUser)
-                            .then(UserPhotosService.clearPhotos);
                     }
                 },
                 register: function(newUser) {
@@ -38,11 +36,17 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                             .then(broadcastNewUser);
                     }
                 },
-                getUserFirstName: function() {
-                    if (loggedIn === true) return user.first_name;
+                getUserFullName: function() {
+                    if (loggedIn === true) return user.first_name + ' ' + user.last_name;
                 },
                 getUser: function() {
                     if (loggedIn === true) return user;
+                },
+                getUsername: function() {
+                    if (loggedIn === true) return user.username;
+                },
+                getUserId: function() {
+                    if (loggedIn === true) return user._id;
                 },
                 isLoggedIn: function() {
                     return loggedIn;
@@ -50,6 +54,6 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                 getStatus: function() {
                     statusResource.save({}).$promise
                         .then(setUser);
-                }
+                },
             }
         }]);

@@ -1,6 +1,13 @@
-<div ng-repeat="comment in userComments.comments track by comment._id">
-    <p>{{comment.comment}}</p>
-    <p>{{comment.date_time}}</p>
-    <!-- Will need to implement navigation mechanism at some point -->
-    <p>PhotoId: {{comment._id}}</p>
-</div>
+<md-list>
+    <md-list-item ng-repeat="photo in userComments.commentedPhotos track by photo._id" aria-label="hidden" ui-sref="photos.display.detail({userId: photo.user, photoId: photo._id})">
+        <img ng-src="/assets/images/thumbnails/{{photo.file_name}}"></img>
+        <md-list>
+            <md-list-item class="md-2-line md-long-text" ng-repeat="comment in photo.comments track by comment._id">
+                <div class="md-list-item-text">
+                    <p>{{comment.comment}}</p>
+                    <p class="md-caption">{{comment.date_time | date: 'MM/dd/yyyy @ hh:mma'}}</p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-list-item>
+</md-list>

@@ -3,7 +3,8 @@
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
 var cs142App = angular.module('cs142App', ['mentio', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
-cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', function($stateProvider, $locationProvider, $urlRouterProvider) {
+cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', '$mdIconProvider',
+    function($stateProvider, $locationProvider, $urlRouterProvider, $mdIconProvider) {
     $urlRouterProvider.otherwise('/login-register/login');
     $stateProvider
        
@@ -60,6 +61,35 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
             }
         })
 
+        .state('profile', {
+            parent: 'root',
+            url: '/profile/:userId',
+            resolve: {
+                userDetailService: 'UserDetailService',
+                userData: function($stateParams, userDetailService) {
+                    return userDetailService.getUser($stateParams.userId)
+                        .then(function(result) {
+                            var data = {
+                                user: result,
+                                isDisabled: {}
+                            };
+                            angular.forEach(Object.keys(result), function(key) {
+                                data.isDisabled[key] = true;
+                            });
+                            return data;
+                        });
+                },
+                updateUser: function($stateParams, userDetailService) {
+                        return userDetailService.updateUser.bind(null, $stateParams.userId);
+                }
+            },
+            views: {
+                'display@root': {
+                    templateUrl: 'components/user-profile/user-profileTemplate.html',
+                    controller: 'UserProfileController'
+                }
+            }
+        })
 
         .state('login-register', {
             parent: 'root',
@@ -152,7 +182,10 @@ cs142App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', fu
                     controller: 'UserCommentsController'
                 }
             }
-        })
+        });
+    $mdIconProvider
+        .defaultFontSet('fa')
+        .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg');
 }]);
 cs142App.run(function(Session) {
     Session.getStatus();
@@ -160,17 +193,26 @@ cs142App.run(function(Session) {
 
 cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeout', '$http', 'Session', 
     function ($rootScope, $scope, $state, $timeout, $http, Session) {
-
         var selectedPhotoFile;
         
+        $scope.main = {};
+
         $scope.inputFileNameChanged = function(element) {
             selectedPhotoFile = element.files[0];
+            $scope.$apply($scope.showUpload = $scope.inputFileNameSelected());
         };
 
+        $scope.clearPhotoFile = function() {
+            document.getElementById('file-input').value = "";
+            $scope.showUpload = false;
+        };
+        
         $scope.inputFileNameSelected = function() {
             return !!selectedPhotoFile;
         };
 
+        $scope.showUpload = $scope.inputFileNameSelected();
+        
         $scope.uploadPhoto = function() {
             if (!$scope.inputFileNameSelected()) {
                 console.error('uploadPhoto called with no selected file');
@@ -192,20 +234,25 @@ cs142App.controller('MainController', ['$rootScope', '$scope', '$state', '$timeo
             });
         };
 
-        $scope.main = {};
+        $scope.openMenu = function($mdOpenMenu, ev) {
+            origEv = ev;
+            $mdOpenMenu(ev);
+        };
         $scope.main.title = 'Users';
         $scope.main.selectedUser = '';
         $scope.main.loggedIn = Session.isLoggedIn();
-        $scope.main.loggedInId = Session.getUserFirstName();
+        $scope.main.loggedInUser = Session.getUserFullName();
+        $scope.main.loggedInId = Session.getUserId();
+        $scope.main.loggedInUsername = Session.getUsername();
         $scope.main.curIndex = -1;
 
         $scope.main.logout = Session.logout;
         
         $rootScope.$on('sessionChanged', function() {
-            $scope.main.loggedInUser = Session.getUserFirstName();
+            $scope.main.loggedInUser = Session.getUserFullName();
+            $scope.main.loggedInUsername = Session.getUsername();
             $scope.main.loggedIn = Session.isLoggedIn();
-            $scope.main.loggedInId = Session.getUserFirstName();
-            console.log($scope.main.loggedIn);
+            $scope.main.loggedInId = Session.getUserId();
         });
 
         $rootScope.$on('$stateChangeStart', function(event, toState) {
