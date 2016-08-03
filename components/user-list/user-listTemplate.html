@@ -2,11 +2,14 @@
     <!--<div ng-repeat="user in userList.users" layout="column" layout-align="space-between stretch">-->
         <md-list layout="column" layout-align="space-between stretch">
             <!-- TODO: If number of photos and comments are coupled with userInfo on querying /users, no extra models or tracking will be necessary -->
-            <md-list-item ng-repeat="(uIndex, user) in userList.users track by user._id">
-                <div layout="row">
+            <md-list-item class="md-2-line" ng-repeat="(uIndex, user) in userList.users track by user._id">
+                <img ng-src="/assets/images/avatars/{{user.username}}.jpg" class="md-avatar"></img>
+                <div class="md-list-item-text">
                     <md-button ui-sref="users.detail({userId: user._id})">{{user.first_name}} {{user.last_name}}</md-button>
-                    <md-button class="md-icon-button" ui-sref="photos.display({userId: user._id})">{{user.nPhotos}}</md-button>
-                    <md-button class="md-icon-button" ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
+                    <div layout="row">
+                        <md-button class="md-icon-button" ui-sref="photos.display({userId: user._id})">{{user.nPhotos}}</md-button>
+                        <md-button class="md-icon-button" ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
+                    </div>
                 </div>
             </md-list-item>
         </md-list>
