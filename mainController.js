@@ -63,7 +63,16 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
 
             .state('profile', {
                 parent: 'root',
-                url: '/profile/:userId',
+                abstract: true,
+                url: '/profile',
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/profile/profileTemplate.html'
+                    }
+                }
+            })
+            .state('profile.user', {
+                url: '/:userId',
                 resolve: {
                     userDetailService: 'UserDetailService',
                     userData: function($stateParams, userDetailService) {
@@ -83,12 +92,30 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                             return userDetailService.updateUser.bind(null, $stateParams.userId);
                     }
                 },
-                views: {
-                    'display@root': {
-                        templateUrl: 'components/user-profile/user-profileTemplate.html',
-                        controller: 'UserProfileController'
+                controller: 'ProfileUserController'
+                templateUrl: 'components/profile/profile-user/profile-userTemplate.html',
+            })
+            .state('profile.user.photos', {
+                url:'/:photoId',
+                resolve: {
+                    userPhotoService: 'UserPhotosService',
+                    photoData: function($stateParams, userPhotoService) {
+                        return userPhotoService.getPhotos($stateParams.photoId);
                     }
-                }
+                },
+                controller: 'ProfilePhotosController',
+                templateUrl: 'components/profile/profile-photos/profile-photosTemplate.html'
+            })
+            .state('profile.user.comments', {
+                url:'/:commentId',
+                resolve: {
+                    userCommentsService: 'UserCommentsService',
+                    commentData: function($stateParams, userCommentsService) {
+                        return userCommentsService.getComments($stateParams.commentId);
+                    }
+                },
+                controller: 'ProfileCommentsController',
+                templateUrl: 'components/profile/profile-comments/profile-commentsTemplate.html'
             })
 
             .state('login-register', {

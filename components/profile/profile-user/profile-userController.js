@@ -1,4 +1,4 @@
-cs142App.controller('UserProfileController', ['$scope', 'userData', 'updateUser', function($scope, userData, updateUser) {
+cs142App.controller('ProfileUserController', ['$scope', 'userData', 'updateUser', function($scope, userData, updateUser) {
     $scope.userProfile = userData;
     $scope.backupState = '';
     $scope.updateUser = function(fieldNameStr) {
