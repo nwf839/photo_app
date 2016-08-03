@@ -57,6 +57,11 @@ var photoSchema = new mongoose.Schema({
 
 // static methods
 
+// Returns photo matching specified id
+photoSchema.statics.findPhotoById = function(id) {
+    return this.findById(id).exec();
+};
+
 // Returns all photos matching the specified userId
 photoSchema.statics.findPhotosByUserId = function(id) {
     return this.find({user_id: id}).populate('comments.user', '_id first_name last_name').exec();

@@ -9,6 +9,6 @@ module.exports = (function() {
     router.use(ensureAuthenticated);
     router.get('/comments/:id', comments.getComments);
     router.put('/commentsOfPhoto/:photoId', comments.addComment);
-    router.delete('comment/:id', comments.deleteComment);
+    router.get('/commentsOfPhoto/:photoId', comments.getCommentPhoto);
     return router;
 })();

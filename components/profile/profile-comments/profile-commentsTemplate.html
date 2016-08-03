@@ -1,0 +1,14 @@
+<md-list>
+    <md-list-item ng-repeat="photo in commentsProfile.commentedPhotos track by photo._id" aria-label="hidden">
+        <img ng-src="/assets/images/thumbnails/{{photo.file_name}}"></img>
+        <md-list class="md-2-line md-long-text">
+            <md-list-item ng-repeat="(cIndex, comment) in photo.comments track by comment._id" ng-mouseover="showIcon(comment._id)" ng-mouseleave="hideIcon(comment._id)">
+                <div class="md-list-item-text">
+                    <p>{{comment.comment}}</p>
+                    <p class="md-caption">{{comment.date_time | date: 'MM/dd/yyyy @ hh:mma'}}</p>
+                </div>
+                <md-icon ng-show="commentsProfile.iconIsVisible[comment._id]" md-svg-icon="close" ng-click="deleteComment(cIndex, photo._id, comment.user)"></md-icon>
+            </md-list-item>
+        </md-list>
+    </md-list-item>
+</md-list>

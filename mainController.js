@@ -64,15 +64,7 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
             .state('profile', {
                 parent: 'root',
                 abstract: true,
-                url: '/profile',
-                views: {
-                    'display@root': {
-                        templateUrl: 'components/profile/profileTemplate.html'
-                    }
-                }
-            })
-            .state('profile.user', {
-                url: '/:userId',
+                url: '/profile/:userId',
                 resolve: {
                     userDetailService: 'UserDetailService',
                     userData: function($stateParams, userDetailService) {
@@ -92,26 +84,75 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                             return userDetailService.updateUser.bind(null, $stateParams.userId);
                     }
                 },
-                controller: 'ProfileUserController'
-                templateUrl: 'components/profile/profile-user/profile-userTemplate.html',
+                views: {
+                    'display@root': {
+                        templateUrl: 'components/profile/profileTemplate.html'
+                    }
+                }
             })
-            .state('profile.user.photos', {
-                url:'/:photoId',
+            .state('profile.user', {
+                url: '/user',
+                /*resolve: {
+                    userDetailService: 'UserDetailService',
+                    userData: function($stateParams, userDetailService) {
+                        return userDetailService.getUser($stateParams.userId)
+                            .then(function(result) {
+                                var data = {
+                                    user: result,
+                                    isDisabled: {}
+                                };
+                                angular.forEach(Object.keys(result), function(key) {
+                                    data.isDisabled[key] = true;
+                                });
+                                return data;
+                            });
+                    },
+                    updateUser: function($stateParams, userDetailService) {
+                            return userDetailService.updateUser.bind(null, $stateParams.userId);
+                    }
+                },*/
+                controller: 'ProfileUserController',
+                templateUrl: 'components/profile/profile-user/profile-userTemplate.html'
+            })
+            .state('profile.photos', {
+                url: '/photos',
                 resolve: {
                     userPhotoService: 'UserPhotosService',
                     photoData: function($stateParams, userPhotoService) {
-                        return userPhotoService.getPhotos($stateParams.photoId);
+                        return userPhotoService.getPhotos($stateParams.userId);
                     }
                 },
                 controller: 'ProfilePhotosController',
                 templateUrl: 'components/profile/profile-photos/profile-photosTemplate.html'
             })
-            .state('profile.user.comments', {
-                url:'/:commentId',
+            .state('profile.comments', {
+                url:'/comments',
                 resolve: {
                     userCommentsService: 'UserCommentsService',
+                    addCommentService: 'AddCommentService',
                     commentData: function($stateParams, userCommentsService) {
-                        return userCommentsService.getComments($stateParams.commentId);
+                        return userCommentsService.getComments($stateParams.userId)
+                            .then(function(result) {
+                                var data = {
+                                    commentedPhotos: result,
+                                    iconIsVisible: {}
+                                };
+                                angular.forEach(result, function(photo) {
+                                    angular.forEach(photo.comments, function(comment) {
+                                        data.iconIsVisible[comment._id] = false;
+                                    });
+                                });
+                                return data;
+                            });
+                    },
+                    deleteComment: function(addCommentService) {
+                        return addCommentService.addComment;
+                    },
+                    getCommentPhoto: function(addCommentService) {
+                        return addCommentService.getCommentPhoto;
+                    },
+                    getComments: function(userCommentsService) {
+                        return userCommentsService.getComments;
                     }
                 },
                 controller: 'ProfileCommentsController',
@@ -220,7 +261,8 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
 
         $mdIconProvider
             .defaultFontSet('fa')
-            .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg');
+            .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg')
+            .icon('close', '/assets/images/icons/ic_close_48px.svg');
     }
 ]);
 

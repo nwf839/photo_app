@@ -26,8 +26,12 @@ module.exports.addComment = function(request, response, next) {
         .catch(next);
 };
 
-module.exports.deleteComment = function(request, response, next) {
-    Photo.deleteComment(request.params.id)
+module.exports.getCommentPhoto = function(request, response, next) {
+    Photo.findPhotoById(request.params.photoId)
+        .then(function(result) {
+            console.log(result);
+            return result;
+        })
         .then(respondOnSuccess.bind(null, response))
         .catch(next);
 };
