@@ -7,7 +7,8 @@
                     <p>{{comment.comment}}</p>
                     <p class="md-caption">{{comment.date_time | date: 'MM/dd/yyyy @ hh:mma'}}</p>
                 </div>
-                <md-icon ng-show="commentsProfile.iconIsVisible[comment._id]" md-svg-icon="close" ng-click="deleteComment(cIndex, photo._id, comment.user)"></md-icon>
+                <md-icon ng-show="commentsProfile.iconIsVisible[comment._id]" md-svg-icon="close" ng-click="showDialog($event, cIndex, photo._id, comment.user)">
+                    <!-- ng-click="deleteComment(cIndex, photo._id, comment.user, $event)"/md-icon -->
             </md-list-item>
         </md-list>
     </md-list-item>

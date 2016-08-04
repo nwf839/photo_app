@@ -1,11 +1,10 @@
-cs142App.controller('ProfileCommentsController', ['$scope', 'commentData', 'deleteComment', 'getCommentPhoto', 'getComments',
-    function($scope, commentData, deleteComment, getCommentPhoto, getComments) {
+cs142App.controller('ProfileCommentsController', ['$scope', '$mdDialog', 'commentData', 'deleteComment', 'getCommentPhoto', 'getComments',
+    function($scope, $mdDialog, commentData, deleteComment, getCommentPhoto, getComments) {
         $scope.commentsProfile = commentData;
         $scope.getCommentPhoto = getCommentPhoto;
-        $scope.deleteComment = function(commentIndex, photoId, userId) {
+        var deleteCom = function(commentIndex, photoId, userId, clickEv) {
             $scope.getCommentPhoto(photoId)
                 .then(function(photo) {
-                    console.log(photo);
                     photo.comments.splice(commentIndex, 1);
                     return photo;
                 }).then(deleteComment)
@@ -21,6 +20,19 @@ cs142App.controller('ProfileCommentsController', ['$scope', 'commentData', 'dele
 
         $scope.hideIcon = function(id) {
             $scope.commentsProfile.iconIsVisible[id] = false;
+        };
+
+        $scope.showDialog = function(ev, commentIndex, photoId, userId) {
+                var confirm = $mdDialog.confirm()
+                    .title('Are you sure you want to delete this comment?')
+                    .textContent('To ignore, press "Cancel"')
+                    .ariaLabel('Comment Delete Confirmation')
+                    .targetEvent(ev)
+                    .cancel('Cancel')
+                    .ok('Delete')
+                $mdDialog.show(confirm).then(function() {
+                    deleteComment(commentIndex, photoId, userId);
+                });
         };
     }
 ]);
