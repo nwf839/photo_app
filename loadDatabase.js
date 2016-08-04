@@ -39,10 +39,10 @@ var SchemaInfo = require('./schema/schemaInfo.js');
 var versionString = '1.0';
 
 //temp
-var path = require('path'),
+/*var path = require('path'),
     photosDir = path.join(__dirname, '/assets/images/photos/'),
     thumbDir = path.join(__dirname, '/assets/images/thumbnails/'),
-    easyimage = require('easyimage');
+    easyimage = require('easyimage');*/
 // We start by removing anything that existing in the collections.
 var removePromises = [User.remove({}), Photo.remove({}), SchemaInfo.remove({})];
 
@@ -109,7 +109,7 @@ Promise.all(removePromises).then(function () {
                     }
                     photoObj.save();
                     console.log('Adding photo:', photo.file_name, ' of user ID ', photoObj.user_id);
-                    easyimage.thumbnail(
+                    /*easyimage.thumbnail(
                         {
                             src: photosDir + photo.file_name,
                             dst: thumbDir + photo.file_name,
@@ -118,7 +118,7 @@ Promise.all(removePromises).then(function () {
                             console.log(file);
                         }, function(err) {
                             console.log(err);
-                        });
+                        });*/
                 }
             });
         });

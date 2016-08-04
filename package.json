@@ -7,7 +7,8 @@
     "test": "echo Test your code by opening http://localhost:3000 in your browser.",
     "jshint": "./node_modules/.bin/jshint --config .jshintrc --exclude=node_modules,test . || exit 0",
     "build-css": "~/bin/build-css",
-    "watch-css": "~/bin/watch-css"
+    "watch-css": "~/bin/watch-css",
+    "build-db": "cp -r ./imagesBackup/images ./assets && node ./loadDatabase.js"
   },
   "author": "Mendel Rosenblum <mendel@cs.stanford.edu> (http://www.stanford.edu/~mendel)",
   "license": "ISC",
