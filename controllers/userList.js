@@ -10,6 +10,7 @@ var Promise = require('bluebird'),
 
 module.exports.getList = function (request, response, next) {
     var userList = [],
+        id,
     setUserList = function(result) {
         userList = result;
     },
@@ -40,7 +41,8 @@ module.exports.getList = function (request, response, next) {
             });
         });
     };
-    User.generateUserList()
+    if (request.user) id = request.user._id;
+    User.generateUserList(id)
         .then(copyMongoDoc)
         .then(setUserList)
         .then(fetchData)

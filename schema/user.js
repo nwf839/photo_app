@@ -50,8 +50,9 @@ userSchema.pre('save', function(next) {
 
 // Static Methods
 // Generates list of all Users with only their ids, first names, and last names
-userSchema.statics.generateUserList = function() {
-    return this.find({}).select('_id first_name last_name username').sort({_id: 1}).exec();
+userSchema.statics.generateUserList = function(id) {
+    if (id) return this.find({_id: {$ne: id}}).select('_id first_name last_name username').exec();
+    else return this.find({}).select('_id first_name last_name username').exec();
 };
 
 // Returns single user with all fields when queried by id

@@ -13,8 +13,18 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                 abstract: true,
                 resolve: {
                     userListService: 'UserListService',
-                    list: function(userListService) {
-                        return userListService.getUserList();
+                    listData: function(userListService) {
+                        return userListService.getUserList()
+                            .then(function(result) {
+                                var data = {
+                                    list: result,
+                                    isExpanded: {}
+                                };
+                                angular.forEach(result, function(user) {
+                                    data.isExpanded[user._id] = false;
+                                });
+                                return data;
+                            });
                     },
                     updateList: function(userListService) {
                         return userListService.getUserList;
@@ -257,7 +267,10 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
         $mdIconProvider
             .defaultFontSet('fa')
             .icon('dropdown', '/assets/images/icons/ic_arrow_drop_down_24px.svg')
-            .icon('close', '/assets/images/icons/ic_close_48px.svg');
+            .icon('close', '/assets/images/icons/ic_close_24px.svg')
+            .icon('user', '/assets/images/icons/ic_person_outline_24px.svg')
+            .icon('photos', '/assets/images/icons/ic_photo_camera_24px.svg')
+            .icon('comments', '/assets/images/icons/ic_comment_24px.svg');
     }
 ]);
 

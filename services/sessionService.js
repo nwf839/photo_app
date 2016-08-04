@@ -27,7 +27,7 @@ services.factory('Session', ['$rootScope', '$resource', '$state','$timeout', 'Us
                 logout: function() {
                     if (loggedIn === true) {
                         logoutResource.save({}).$promise
-                            .then(setUser)
+                            .then(setUser);
                     }
                 },
                 register: function(newUser) {

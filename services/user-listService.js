@@ -15,7 +15,7 @@ cs142App.factory('UserListService', ['$resource', function($resource) {
                 return resource.query().$promise
                     .then(setList);
         }
-        /*reset: function() {
+        /*resetList: function() {
             list = [];
             return this.getUserList();
         }*/

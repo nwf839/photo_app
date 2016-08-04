@@ -1,16 +1,36 @@
-<div class='user-list'>
+<div class='user-list' ng-cloak>
     <!--<div ng-repeat="user in userList.users" layout="column" layout-align="space-between stretch">-->
         <md-list layout="column" layout-align="space-between stretch">
             <!-- TODO: If number of photos and comments are coupled with userInfo on querying /users, no extra models or tracking will be necessary -->
-            <md-list-item class="md-2-line" ng-repeat="(uIndex, user) in userList.users track by user._id">
-                <img ng-src="/assets/images/avatars/{{user.username}}.jpg" class="md-avatar"></img>
-                <div class="md-list-item-text">
-                    <md-button ui-sref="users.detail({userId: user._id})">{{user.first_name}} {{user.last_name}}</md-button>
-                    <div layout="row">
-                        <md-button class="md-icon-button" ui-sref="photos.display({userId: user._id})">{{user.nPhotos}}</md-button>
-                        <md-button class="md-icon-button" ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
-                    </div>
+            <md-list-item ng-repeat="(uIndex, user) in userList.users track by user._id" ng-mouseover="showButton(user._id)" ng-mouseleave="hideButton(user._id)">
+                <img ng-src="/assets/images/avatars/{{user.username}}.jpg" class="md-avatar md-icon"></img>
+                <div class="lock-size" layout="row" layout-align="center center" ng-show="userList.isExpanded[user._id]" ng-cloak>
+                    <md-fab-speed-dial md-direction="right" md-open="false" class="md-scale">
+                        <md-fab-trigger>
+                            <md-button aria-label="Menu" class="md-fab md-mini">
+                                <md-icon md-svg-icon="close"></md-icon>
+                            </md-button>
+                        </md-fab-trigger>
+                        <md-fab-actions> 
+                            <!--ng-show="userList.isExpanded[user._id]">-->
+                            <md-button aria-label="User" class="md-fab md-raised md-mini" ui-sref="users.detail({userId: user._id})">
+                                <md-icon md-svg-icon="user" aria-label="User"></md-icon>
+                            </md-button>
+                            <md-button aria-label="Photos" class="md-fab md-raised md-mini" ui-sref="photos.display({userId: user._id})">
+                                <md-icon md-svg-icon="photos" aria-label="Photos"></md-icon>
+                            </md-button>
+                            <md-button aria-label="Comments" class="md-fab md-raised md-mini" ui-sref="comments({userId: user._id})">
+                                <md-icon md-svg-icon="comments" aria-label="Comments"></md-icon>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
                 </div>
+
+                <!--<div class="md-list-item-text" ng-show="userList.isExpanded[user._id]">
+                        <md-button>ui-sref="users.detail({userId: user._id})">{{user.first_name}} {{user.last_name}}</md-button>
+                        <md-icon-button ui-sref="photos.display({userId: user._id})">{{user.nPhotos}}</md-button>
+                        <md-icon-button ui-sref="comments({userId: user._id})">{{user.nComments}}</md-button>
+                </div>-->
             </md-list-item>
         </md-list>
 </div>

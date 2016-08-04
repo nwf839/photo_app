@@ -1,16 +1,18 @@
 'use strict';
 
-cs142App.controller('LoginRegisterController', ['$scope', 'Session',
-  function($scope, Session) {
+cs142App.controller('LoginRegisterController', ['$scope', 'Session', 'UserListService', 'updateList',
+  function($scope, Session, UserListService, updateList) {
       $scope.main.selectedUser = '';
       $scope.displayLogin = true;
       $scope.switchForm = function() {
           $scope.displayLogin = !$scope.displayLogin;
       };
      
-      $scope.login = Session.login;
+      $scope.login = function() {
+          Session.login($scope.curUser)
+      };
       $scope.register = function(user) {
-          Session.register(user);
+          Session.register(user)
       };
 
       $scope.curUser = {};
