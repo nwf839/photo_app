@@ -1,0 +1,10 @@
+<md-grid-list 
+    md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-lg="4" md-cols-gt-lg="5"
+    md-row-height="1:1" md-gutter="8px">
+    <md-grid-tile ng-repeat="(pIndex, photo) in photoProfile.photos track by photo._id" ng-mouseover="showHeader(photo._id)" ng-mouseleave="hideHeader(photo._id)">
+        <md-grid-tile-header ng-show="photoProfile.iconIsVisible[photo._id]">
+            <md-icon md-svg-icon="close" ng-click="showDialog($event, photo._id, pIndex)"></md-icon>
+        </md-grid-tile-header>
+        <img ng-src="assets/images/thumbnails/{{photo.file_name}}"></img>
+    </md-grid-tile>
+</md-grid-list>

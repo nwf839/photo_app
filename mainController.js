@@ -92,25 +92,6 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
             })
             .state('profile.user', {
                 url: '/user',
-                /*resolve: {
-                    userDetailService: 'UserDetailService',
-                    userData: function($stateParams, userDetailService) {
-                        return userDetailService.getUser($stateParams.userId)
-                            .then(function(result) {
-                                var data = {
-                                    user: result,
-                                    isDisabled: {}
-                                };
-                                angular.forEach(Object.keys(result), function(key) {
-                                    data.isDisabled[key] = true;
-                                });
-                                return data;
-                            });
-                    },
-                    updateUser: function($stateParams, userDetailService) {
-                            return userDetailService.updateUser.bind(null, $stateParams.userId);
-                    }
-                },*/
                 controller: 'ProfileUserController',
                 templateUrl: 'components/profile/profile-user/profile-userTemplate.html'
             })
@@ -118,8 +99,22 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                 url: '/photos',
                 resolve: {
                     userPhotoService: 'UserPhotosService',
+                    addCommentService: 'AddCommentService',
                     photoData: function($stateParams, userPhotoService) {
-                        return userPhotoService.getPhotos($stateParams.userId);
+                        return userPhotoService.getPhotos($stateParams.userId)
+                            .then(function(result) {
+                                var data = {
+                                    photos: result,
+                                    iconIsVisible: {}
+                                };
+                                angular.forEach(result, function(photo) {
+                                    data.iconIsVisible[photo._id] = false;
+                                });
+                                return data;
+                            });
+                    },
+                    deletePhoto: function(addCommentService) {
+                        return addCommentService.deletePhoto;
                     }
                 },
                 controller: 'ProfilePhotosController',

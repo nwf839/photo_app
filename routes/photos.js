@@ -8,6 +8,5 @@ var photos = require('../controllers/photos.js'),
 module.exports = (function() {
     router.get('/photosOfUser/:id', photos.getPhotos);
     router.post('/photos/new', photos.addPhoto);
-    router.delete('/photos/:id', photos.deletePhoto);
     return router;
 })();

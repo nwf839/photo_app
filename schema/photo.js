@@ -113,12 +113,8 @@ photoSchema.statics.getCommentsByUserId = function(id) {
         ]);
 };
 
-photoSchema.statics.deleteComment = function(id) {
-    return this.aggregate(
-        [
-            { $unwind: '$comments' },
-            { $match: { _id: mongoose.Types.ObjectId(id)}}
-        ]).remove().exec();
+photoSchema.statics.deletePhoto = function(id) {
+    return this.findByIdAndRemove(id).exec();
 };
 // the schema is useless so far
 // we need to create a model using it

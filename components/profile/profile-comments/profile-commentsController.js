@@ -25,7 +25,7 @@ cs142App.controller('ProfileCommentsController', ['$scope', '$mdDialog', 'commen
         $scope.showDialog = function(ev, commentIndex, photoId, userId) {
                 var confirm = $mdDialog.confirm()
                     .title('Are you sure you want to delete this comment?')
-                    .textContent('To ignore, press "Cancel"')
+                    .textContent('Press "Delete" to confirm or "Cancel" to ignore')
                     .ariaLabel('Comment Delete Confirmation')
                     .targetEvent(ev)
                     .cancel('Cancel')

@@ -9,10 +9,14 @@ services.factory('AddCommentService', ['$resource',
 
         return {
             getCommentPhoto: function(id) {
-                console.log(id);
                 return resource.get({photoId: id}).$promise
                     .then(function(result) {
-                        console.log(result);
+                        return result.toJSON();
+                    });
+            },
+            deletePhoto: function(id) {
+                return resource.delete({photoId: id}).$promise
+                    .then(function(result) {
                         return result.toJSON();
                     });
             },

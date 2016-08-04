@@ -67,6 +67,5 @@ module.exports.deletePhoto = function(request, response, next) {
 };
 
 module.exports.deletePhotoFile = function(filename) {
-    fs.unlinkAsync(photosDir + filename)
-        .then(fs.unlinkAsync.bind(thumbsDir + filename));
+    Promise.join(fs.unlinkAsync(photosDir + filename), fs.unlinkAsync(thumbsDir + filename));
 }
