@@ -2,7 +2,7 @@ cs142App.controller('ProfileCommentsController', ['$scope', '$mdDialog', 'commen
     function($scope, $mdDialog, commentData, deleteComment, getCommentPhoto, getComments) {
         $scope.commentsProfile = commentData;
         $scope.getCommentPhoto = getCommentPhoto;
-        var deleteCom = function(commentIndex, photoId, userId, clickEv) {
+        var deleteCom = function(commentIndex, photoId, userId) {
             $scope.getCommentPhoto(photoId)
                 .then(function(photo) {
                     photo.comments.splice(commentIndex, 1);
@@ -31,7 +31,7 @@ cs142App.controller('ProfileCommentsController', ['$scope', '$mdDialog', 'commen
                     .cancel('Cancel')
                     .ok('Delete')
                 $mdDialog.show(confirm).then(function() {
-                    deleteComment(commentIndex, photoId, userId);
+                    deleteCom(commentIndex, photoId, userId);
                 });
         };
     }
