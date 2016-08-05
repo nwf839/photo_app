@@ -113,6 +113,7 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                     photoData: function($stateParams, userPhotoService) {
                         return userPhotoService.getPhotos($stateParams.userId)
                             .then(function(result) {
+                                console.log(result);
                                 var data = {
                                     photos: result,
                                     iconIsVisible: {}
@@ -206,12 +207,11 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                         return userPhotosService.getPhotos($stateParams.userId)
                             .then(function(result) {
                                 var data = {
-                                    photos: [],
+                                    photos: result,
                                     comments: [],
                                     ids: [],
                                 }
                                 angular.forEach(result, function(photo) {
-                                    data.photos.push(photo);
                                     data.comments.push({comment: ''});
                                     data.ids.push(photo._id);
                                 });

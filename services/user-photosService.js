@@ -3,9 +3,9 @@
 services.factory('UserPhotosService', ['$resource',// 'UserDetailService', 
     function($resource) {//, UserDetailService) {
         var resource = $resource('/photosOfUser/:id'), 
-        photos = [],
         setPhotos = function(response) {
             //var photoArray = response.toJSON();
+            var photos = [];
             angular.forEach(response, function(photo) {
                 photos.push(photo.toJSON());
             });

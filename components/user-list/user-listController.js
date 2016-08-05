@@ -5,10 +5,9 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
         $scope.main.title = 'Users';
         $scope.main.selectedUser = '';
         $scope.userList = listData;
-        console.log($scope.userList.isExpanded);
 
-        $scope.showButton= function(id) {
-            $scope.userList.isExpanded[id] = true;
+        $scope.toggleView= function(id) {
+            $scope.userList.isExpanded[id] = !$scope.userList.isExpanded[id];
         };
 
         $scope.hideButton= function(id) {
@@ -18,14 +17,14 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
         $rootScope.$on('newUser', function() {
             updateList()
                 .then(function(result) {
-                    $scope.userList.users = result;
+                    $scope.userList.list = result;
                 });
         });
 
         $rootScope.$on('sessionChanged', function() {
             updateList()
                 .then(function(result) {
-                    $scope.userList.users = result;
+                    $scope.userList.list = result;
                 });
         });
     }]);

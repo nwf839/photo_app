@@ -1,7 +1,7 @@
 'use strict';
 
-cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentService', 'photoDetail', 'Session', 'list', '$interval',
-    function($scope, $state, AddCommentService, photoDetail, Session, list, $interval) {
+cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentService', 'photoDetail', 'Session', 'listData', 
+    function($scope, $state, AddCommentService, photoDetail, Session, listData) {
     var replacePhoto = function(photo) {
         $scope.photoDetail.photo = photo;
         $scope.photoDetail.commentModel.comment = '';
@@ -17,7 +17,7 @@ cs142App.controller('PhotoDetailController', ['$scope', '$state', 'AddCommentSer
             .then(replacePhoto);
     };
 
-    $scope.photoDetail.userList = list;
+    $scope.photoDetail.userList = listData.list;
     angular.forEach($scope.photoDetail.userList, function(item) {
         item.label = item.first_name + ' ' + item.last_name;
     });
