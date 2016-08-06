@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('cs142App.core', ['ngMaterial', 'ngResource', 'ngMessages']);
-var cs142App = angular.module('cs142App', ['mentio', 'ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
+
+// XXX REMOVED MENTIO FOR TESTING
+var cs142App = angular.module('cs142App',['ui.router', 'cs142App.core', 'cs142App.services', 'cs142App.directives']);
 
 cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
     function($stateProvider, $urlRouterProvider, $mdIconProvider) {
@@ -18,10 +20,12 @@ cs142App.config(['$stateProvider', '$urlRouterProvider', '$mdIconProvider',
                             .then(function(result) {
                                 var data = {
                                     list: result,
-                                    isExpanded: {}
+                                    isExpanded: [],
+                                    domSections: []
                                 };
                                 angular.forEach(result, function(user) {
-                                    data.isExpanded[user._id] = false;
+                                    data.isExpanded.push(false);
+                                    data.domSections.push(null);
                                 });
                                 return data;
                             });

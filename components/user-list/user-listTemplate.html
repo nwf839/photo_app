@@ -2,14 +2,14 @@
     <md-list layout="column" layout-align="space-between stretch">
         <md-list-item ng-repeat="(uIndex, user) in userList.list track by user._id">
             <div layout="row" ng-cloak>
-                <md-fab-speed-dial md-open="userList.isEnable[user._id]" md-direction="right" class="md-scale">
+                <md-fab-speed-dial md-direction="right" class="md-scale">
                     <md-fab-trigger>
-                        <md-button layout="row" ng-click="toggleView(user._id)">
+                        <md-button aria-label="Info" layout="row" ng-click="print(uIndex)">
                             <img ng-src="/assets/images/avatars/{{user.username}}.jpg" class="md-avatar md-icon"></img>
-                            <p class="md-caption" ng-hide="userList.isExpanded[user._id]">{{user.first_name}} {{user.last_name}}</p>
-                            </md-button>
+                            <p class="md-caption">{{user.first_name}} {{user.last_name}}</p>
+                        </md-button>
                     </md-fab-trigger>
-                    <md-fab-actions> 
+                    <md-fab-actions class="fab-panel" id="{{user._id}}">
                         <md-button aria-label="User" class="md-fab md-raised md-mini" ui-sref="users.detail({userId: user._id})">
                             <md-icon md-svg-icon="user" aria-label="User"></md-icon>
                         </md-button>

@@ -6,14 +6,10 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
         $scope.main.selectedUser = '';
         $scope.userList = listData;
 
-        $scope.toggleView= function(id) {
-            $scope.userList.isExpanded[id] = !$scope.userList.isExpanded[id];
+        
+        $scope.print = function(index) {
+            console.log($scope.userList.isExpanded[index]);
         };
-
-        $scope.hideButton= function(id) {
-            $scope.userList.isExpanded[id] = false;
-        };
-
         $rootScope.$on('newUser', function() {
             updateList()
                 .then(function(result) {
@@ -27,4 +23,31 @@ cs142App.controller('UserListController', ['$rootScope', '$scope', '$state', 'li
                     $scope.userList.list = result;
                 });
         });
+
+        var domSections = [];
+        angular.forEach($scope.userList.isExpanded, function() {
+            domSections.push(null);
+        });
+        var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+        var options = {attributes: true};
+        var handler = function(mutationRecords) {
+            angular.forEach(mutationRecords, function(mutation) {
+               var index = angular.element(mutation.target).scope().uIndex;
+               var self = $(name=mutation.target);
+               var parent = self.prev().children();
+               if (domSections[index] === null) {
+                   domSections[index] = parent.children("p").detach();
+               } else {
+                   domSections[index].appendTo(parent);
+                   domSections[index] = null;
+               }
+            });
+        };
+        var observer = new MutationObserver(handler);
+
+        $(document).ready(function() {
+            $('.fab-panel').each(function() {
+                observer.observe(this, options);
+            });
+       });
     }]);
